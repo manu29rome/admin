@@ -1,0 +1,494 @@
+<div class="fixed right-0 bottom-[50px] h-full bg-white shadow-lg z-50 w-full md:w-1/4 top-[48px] ">
+
+  <div [ngStyle]="{
+    'background-image': 'url(' + urlImageBackground + ')',
+    'background-size': 'cover',
+    'background-position': 'center'
+  }"  >
+  <div 
+    class="flex justify-between items-center text-white p-4 h-[38px] panel w-min-[350px]">
+    <button *ngIf="selectedChat" 
+      (click)="backToChatList()" 
+      class="bg-transparent"
+      [ngStyle]="{'color': this.clientData.ColorFive}">
+      <i class="fas fa-arrow-left"></i> 
+    </button>
+  
+    <!-- Botón de búsqueda: oculto si hay un chat seleccionado -->
+    <button #searchInput  
+      *ngIf="!isSearching && !selectedChat"  
+      (click)="toggleSearch()" 
+      class="bg-transparent"
+      [ngStyle]="{'color': this.clientData.ColorFive}">
+      <i class="fas fa-search"></i> 
+    </button>
+
+    <!-- Botón para cerrar el input de búsqueda (visible solo cuando se está buscando y no hay un chat seleccionado) -->
+    <button *ngIf="isSearching && !selectedChat" 
+      (click)="toggleSearch()" 
+      class="bg-transparent"
+      [ngStyle]="{'color': this.clientData.ColorFive}">
+      <i class="fas fa-times"></i> 
+    </button>
+  
+    <!-- Input de búsqueda (con un ancho más pequeño), solo visible si se está buscando y no hay un chat seleccionado -->
+    <input *ngIf="isSearching && !selectedChat" 
+      [(ngModel)]="searchText" 
+      [ngStyle]="{'background-color': '#F4F4F4'}"
+      placeholder="Buscar..." 
+      class="text-black p-1 rounded-md bg-white w-[90%] ml-2" 
+      #searchInput />
+  
+    <!-- Nombre del chat o empresa (se oculta cuando se muestra el input de búsqueda) -->
+    <h2 *ngIf="!isSearching && !selectedChat" 
+      class="text-sm font-semibold text-center"
+      [ngStyle]="{'color': this.clientData.ColorFive}">
+      Chat {{ clientData.nameCompany }}
+    </h2>
+  
+     <!-- Imagen de perfil -->
+    <div *ngIf="selectedChat" 
+      class="relative w-6 h-6">
+      <img [src]="selectedChat?.urlImagen" 
+        alt="Profile picture" 
+        class="rounded-full w-full h-full object-cover">
+    
+      <!-- Punto de estado en la parte inferior derecha -->
+      <div class="absolute bottom-0 right-0 w-2 h-2 rounded-full"
+        [ngStyle]="{'background-color': !selectedChat?.isGroup ? selectedChat.color : 'transparent'}">
+      </div>
+    </div>
+    
+    <!-- Nombre de usuario -->
+    <h2 *ngIf="selectedChat" 
+      class="text-sm font-semibold w-[60%] md:w-[60%]"
+      [ngStyle]="{'color': this.clientData.ColorFive}">
+      {{ selectedChat.primaryName }}
+    </h2>
+  
+    <div class="space-x-2">
+      <button *ngIf="selectedChat?.isGroup" 
+        (click)="toggleGroupList()" 
+        [ngStyle]="{'color': this.clientData.ColorFive}">
+        <i  class="fas fa-users text-sm"></i> 
+      </button>
+    </div>
+
+    <div class="space-x-2">
+      <!-- Botón para cerrar el contenedor (solo visible si no está buscando y no hay un chat seleccionado) -->
+      <button *ngIf="!isSearching" 
+        (click)="close()" 
+        class="bg-transparent"
+        [ngStyle]="{'color': this.clientData.ColorFive}">
+        <i class="fas fa-times"></i> 
+      </button>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- Lista de contactos filtrados -->
+  <div *ngIf="!selectedChat && !isMinimized" 
+    class="scrollbarList h-[calc(100%-80px)] p-1" >
+    
+    <!-- Mensaje cargando lista de chat -->
+    <div *ngIf="chats.length === 0" 
+      class="w-full h-full flex items-center justify-center text-gray-600 text-lg text-center">
+      <p class="text-sm">
+        Cargando lista de chat...
+      </p> 
+    </div>
+    
+    <!-- Componente muestra la lista de usuarios en el chat con su estado y foto -->
+    <div class="space-y-2 h-full">
+      <div *ngFor="let chat of filteredChats(); let i = index"  
+            class="flex justify-between items-center cursor-pointer p-2"
+            (click)="openChat(chat)"
+            (mouseenter)="onMouseOver(i + 1)"  
+            (mouseleave)="onMouseOut()"
+            [ngStyle]="{
+            'background-color': hoveredChat === i + 1 ? this.clientData.ColorFive : 'transparent'}">
+
+            <div class="w-full h-full table">
+              <div class="h-6 table-cell align-middle">
+                <p class="font-semibold text-sm">
+                  <span *ngIf="chat.isView === false" 
+                    [ngStyle]="{'background-color': this.clientData.ColorOne,
+                      'width': '8px', 
+                      'height': '8px',
+                      'border-radius': '50%',
+                      'display': 'inline-block',
+                      'margin-right': '8px'}">
+                  </span>
+                  {{ chat.primaryName }}
+                </p>
+                <p [ngStyle]="{'font-weight': chat.isView === false ? 'bold' : 'normal'}" 
+                  class="text-gray-500 text-xs">
+                  {{ chat.content }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Imagen para grupos sin estado" -->
+            <img *ngIf="chat?.isGroup"
+            [src]="chat.urlImagen || 'default-image.png'"
+              alt="Profile picture" 
+              class="rounded-full w-8 h-8"
+              [style.border]="'2px solid ' + this.clientData.ColorOne">
+
+            <!-- Imagenes para usuarios con estado -->
+            <img *ngIf="!chat?.isGroup"
+              [src]="chat.urlImagen || 'default-image.png'" 
+              alt="Profile picture" 
+              class="rounded-full w-8 h-8"
+              [style.border]="'2px solid ' + this.clientData.ColorOne">
+
+              <div class="relative right-0 h-6 w-2 flex top-1 justify-end">
+                <div class="w-[4px] h-4 bg-blue-500 top-2" 
+                  [ngStyle]="{'background-color': chat.color}"></div>
+              </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modulo que contiene el chat de un usuario seleccionado -->
+  <div *ngIf="selectedChat"
+    class="chat-container w-full h-full absoluteoverflow-hidden">
+    <div #messages 
+      class="messages-container h-full overflow-y-auto" 
+      id="messages">
+
+      <!-- Mensaje chat vacio -->
+      <div *ngIf="isEmpty" 
+        class="flex flex-col items-center justify-center h-full text-gray-500">
+        <p class="text-lg font-semibold">
+            ¡Hola! Envía un mensaje.
+        </p>
+        <img [src]="linkChatIconSayHello" 
+          alt="Saludo"
+          class="w-20 mt-2 object-cover rounded-md mb-2"/>     
+      </div>
+
+      <!-- Modulo para visualizar los integrantes de un grupo nombre y estado de conexion -->
+      <div *ngIf="isGroupListVisible" 
+        class="absolute top-10 left-0 bg-white border border-gray-300 shadow-lg rounded-md w-4/5 z-50 p-2">
+        <div class="max-h-60 overflow-y-auto">
+          <div class="flex justify-between items-center w-full" 
+            [ngStyle]="{'border-bottom': '2px solid ' + this.clientData.ColorThree}">
+              <h2 class="text-sm text-gray-700 mb-2 ml-11">
+                <strong>
+                  Integrantes del grupo
+                </strong>
+              </h2>
+            <button class="text-gray-500 hover:text-gray-700 text-lg font-bold mb-2 mr-1"
+              (click)="toggleGroupList()">
+              <i class="fas fa-times "></i>
+            </button>
+          </div>
+
+          <div *ngFor="let name of groupNames" 
+            class="flex justify-between items-center py-1 border-b last:border-none p-1">
+            <img 
+            [src]="name.Image || 'default-image.png'" 
+              alt="Profile picture" 
+              class="rounded-full w-8 h-8">
+            <span class="w-full text-sm text-gray-700 pl-2">
+              {{ name.Name }}
+            </span>
+            <!-- Círculo estado -->
+            <div class="w-2 h-2 rounded-full"
+              [ngStyle]="{'background-color': name.Color}">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modulo para mostrar los mensajes -->
+      <div *ngFor="let message of chatmessage" 
+        [ngClass]="{'received': !message.IdStatus, 'sent': message.IdStatus}" 
+        class="message relative flex flex-col">
+        
+        <!-- Mostrar el nombre cuando IdStatus sea falso para grupos -->
+        <p class="text-[10px] text-left font-semibold mb-1" 
+          *ngIf="!message.IdStatus && message.Name">
+          {{message.Name}}
+        </p>
+        
+        <div class="message-container flex w-full" 
+          [ngClass]="!message.IdStatus ? 'justify-start' : 'justify-end'"> 
+          <div class="message-text p-2 rounded-lg relative"
+            [ngStyle]="{'background-color': message.isError ? this.clientData.ColorFive : (message.IdStatus ? this.clientData.ColorThree : '#EEEDED'),
+              'color': message.isError ? 'black' : (message.IdStatus ? 'white' : 'black'),
+              'border-bottom': message.IdStatus ? '4px solid ' + this.clientData.ColorThree : 'white',
+              'word-break': 'break-word'}">
+            <div class="flex items-center space-x-2">
+
+            <!-- Menú desplegable para editar o eliminar un mensaje-->
+            <div *ngIf="message.showMenu" 
+              class="absolute top-6 right-0 bg-white shadow-lg rounded-lg border border-gray-200 z-10">
+              <button class="block w-full bg-white text-left px-4 py-2 text-black hover:bg-gray-200" 
+                (click)="deleteMessage(message, message.IdChatMessages)">
+                Eliminar 🗑️
+              </button>
+            </div>
+
+            <button *ngIf="message.IdStatus && !message.isDelete"
+              (click)="toggleMenu(message)" 
+              class="rounded-full absolute top-2 right-2 flex items-center justify-center p-1">
+              <!-- Contenedor de los círculos -->
+              <div class="flex space-x-1">
+                <span class="w-1 h-1 bg-gray-600 rounded-full" style="background-color: white;"></span>
+                <span class="w-1 h-1 bg-gray-600 rounded-full" style="background-color: white;"></span>
+                <span class="w-1 h-1 bg-gray-600 rounded-full" style="background-color: white;"></span>
+              </div>
+            </button>
+
+            <!-- Contenido del mensaje -->
+            <p *ngIf="message.Content" 
+              class="text-sm"
+              [ngStyle]="{'padding-top': message.IdStatus ? '6px' : '0px'}"
+              [innerHTML]="message.Content">
+            </p>
+        </div>
+
+        <img *ngIf="message.Image" 
+          [src]="message.Image" 
+          alt="Imagen enviada" 
+          class="message-image" 
+          (click)="showImageViewer(message.Image || 'https://suiteximagen.blob.core.windows.net/image-error/error-404.webp')"/>
+          
+          <!-- Visualización de archivo -->
+        <div *ngIf="message.File" 
+          class="file-message flex items-center space-x-2">
+          <i class="fas fa-file-alt text-2xl"
+            [ngClass]="{'text-gray-500': !message.IdStatus, 'text-white': message.IdStatus}"></i> 
+            <a [href]="message.File" 
+              target="_blank" 
+              class="file-name" 
+              download 
+              title="{{ message.File }}"
+              [ngStyle]="{'color': !message.IdStatus ? 'black' : 'white'}">
+              {{ truncateFileName(message.File) }}
+            </a>
+        </div>
+
+          <!-- Visualizacion de fechas de envio del mensaje y error cuando no se envia -->
+          <p class="text-[10px] mt-1 text-right" *ngIf="message.IdStatus && !message.isError && !message.isDelete">{{message.CreatedDate | date: 'd MMM y h:mm a'}}</p>
+          <p class="text-[10px] mt-1 text-left" *ngIf="!message.IdStatus && !message.isError && !message.isDelete">{{message.CreatedDate | date: 'd MMM y h:mm a'}}</p>
+          <p class="text-[12px] mt-1 text-right" *ngIf="message.isError" style="color: black;"> <strong>❗Error al enviar el mensaje</strong></p>
+        </div>
+      
+        <!-- Estados leido o no el mensaje -->
+        <div *ngIf="message.IsView && message.IdStatus && !message.Name && !message.isError && !message.isDelete" 
+          class="absolute bottom-0 right-0 text-[10px] pr-2" 
+          style="color: white;">
+          Leído
+        </div>
+        <div *ngIf="!message.IsView && message.IdStatus && !message.Name && !message.isError && !message.isDelete" 
+          class="absolute bottom-0 right-0 text-[10px] pr-2" 
+          style="color: white;">
+          No leído
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor que contiene los botones y cuadro de texto -->
+  <div  class=" absolute chat-controls flex  items-center h-[42px] w-full bottom-12"
+    [ngStyle]="{'background-color': 'white', 'border-top': '2px solid ' + this.clientData.ColorThree}">
+    <!-- Botón para subir archivos -->
+    <input #fileUpload type="file" 
+      class="upload-file" 
+      (change)="uploadFile($event)" 
+      style="display: none;">
+    <button type="button" 
+      (click)="fileUpload.click()" 
+      class="upload-button">
+      <i [ngStyle]="{'color': 'black'}" 
+      class="fas fa-paperclip pr-2"></i>
+    </button>
+    
+    <!-- Input de mensaje -->
+    <div class="flex items-center w-full  rounded-r-2xl" 
+      style="background-color: #EEEDED;">
+      <input type="text" 
+        [(ngModel)]="newMessage" 
+        (keydown.enter)="sendMessage()" 
+        placeholder="Escribe un mensaje..." 
+        class="chat-input flex-grow outline-none h-[32px]" 
+        (paste)="handlePaste($event)">
+    
+        <!-- Botón de emoji -->
+      <div *ngIf="showEmojiPicker" 
+        class="relative">
+        <button (click)="toggleEmojiPicker()"
+           >
+          <i class="fas fa-times pr-2 pl-2 pt-1 pb-1 rounded-full"
+          [ngStyle]="{'background-color': this.clientData.ColorOne, 'color': 'white'}"></i> 
+        </button>
+      </div>
+      <div *ngIf="!showEmojiPicker" class="relative">
+        <button (click)="toggleEmojiPicker()" class="emoji-button"> 
+          <i class="fas fa-face-smile pr-2"></i></button>
+      </div>
+    </div>
+    
+    <!-- Botón de enviar -->
+    <button (click)="sendMessage()" 
+      class="send-button pr-4">
+      <i [ngStyle]="{'color': 'black'}" 
+        class="fas fa-paper-plane w-10"></i>
+    </button>
+  </div>
+
+  <!-- Modal mensajes -->
+  <app-modal-message 
+    [isVisible]="isModalVisible" 
+    [errorMessage]="errorMessage" 
+    [title]="title"
+    [isSuccess]="isSuccess" 
+    [colorOne]="colorOneMessage" 
+    [colorTwo]="colorTwoMessage" 
+    [messageButton]="messageButton" 
+    (closeModalEvent)="closeModal()">
+  </app-modal-message>
+
+  <!-- Modal imagenes -->
+  <app-image-viewer></app-image-viewer>
+
+<!-- Contenedor que muestra el archivo cargado -->
+  <div *ngIf="selectedFileName" 
+    class="file-container"
+    [ngStyle]="{'background-color': 'white', 'border': '2px solid ' + this.clientData.ColorThree}">
+    <i class="fas fa-file-alt file-icon"></i> 
+    <span class="file-name" 
+      [title]="selectedFileName">
+      {{ truncatedFileName }}
+    </span> 
+    <button (click)="clearSelectedFile()" 
+      class="close-button" 
+      aria-label="Eliminar archivo">
+      <i class="fas fa-times"></i> 
+    </button>
+  </div>
+
+   <!-- Contenedor de emojis -->
+  <div class="emoji-picker" 
+   [ngClass]="{'open': showEmojiPicker}">
+   <div class="emoji-picker-container">
+     <emoji-mart (emojiClick)="addEmoji($event)"
+       [style] = " { width: '100%;' } "
+       [i18n]="{ search: 'Buscar', categories: { search: 'Usados Recientemente' } }">
+    </emoji-mart>
+  </div>
+ </div>
+
+ <!-- Contenedor que muestra imagenes -->
+ <div *ngIf="pastedImage" 
+    class="image-container"
+    [ngStyle]="{'background-color': 'white', 'border': '2px solid ' + this.clientData.ColorThree}">
+    <img [src]="pastedImage" 
+      alt="Imagen pegada" 
+      class="pasted-image" />
+    <button (click)="clearPastedImage()" 
+      class="absolute top-0 right-2 bg-transparent border-none cursor-pointer">
+      <i class="fas fa-times text-black"></i> 
+    </button>
+</div>
+
+<!-- Mensaje de archivo demasiado pesado -->
+<div *ngIf="isFileTooLarge" 
+  class="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg p-6 w-4/5 text-center relative">
+    <div class="flex justify-center">
+      <div class="bg-red-500 p-4 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+          class="h-10 w-10 text-white" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+    <h2 class="text-xl font-semibold mt-4"
+      [ngStyle]="{'color': this.clientData.ColorOne }">
+      Archivo demasiado pesado
+    </h2>
+    <p class="text-gray-700 mt-2 text-sm">
+      El archivo que intentas subir supera el límite permitido de 5MB.
+    </p>
+    <button (click)="closeFileSizeWarning()" 
+      class="text-white py-2 px-6 rounded-lg mt-6 w-full"
+      [ngStyle]="{'background-color': isHovered ? this.clientData.ColorTwo : this.clientData.ColorOne }"
+      (mouseenter)="isHovered = true"
+      (mouseleave)="isHovered = false">
+      OK
+    </button>
+  </div>
+</div>
+
+<!-- Mensaje de Eliminar-->
+<div *ngIf="isMessageDelete" 
+  class="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg p-6 w-4/5 text-center relative">
+  <div class="flex justify-center">
+    <div class="bg-red-500 p-4 rounded-full">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+        class="h-10 w-10 text-white" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor"
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round">
+      <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
+      </svg>
+    </div>
+  </div>
+  <h2 class="text-xl font-semibold mt-4"
+    [ngStyle]="{'color': this.clientData.ColorOne }">
+    Eliminar Mensaje
+  </h2>
+  <p class="text-gray-700 mt-2 text-sm">
+    ¿Esta seguro de eliminar el mensaje?
+  </p>
+  <div class="flex justify-center gap-4 mt-6">
+    <button (click)="DeleteMessages(idMessage)" 
+      class="text-white py-2 px-6 rounded-lg flex-1"
+      [ngStyle]="{'background-color': isHovered ? this.clientData.ColorTwo : this.clientData.ColorOne }"
+      (mouseenter)="isHovered = true"
+      (mouseleave)="isHovered = false">
+      Si
+    </button>
+    <button (click)="closeModalMessageDelete()" 
+      class="text-black py-2 px-6 rounded-lg flex-1"
+      [ngStyle]="{'background-color': isHovered2 ? this.clientData.ColorFour : this.clientData.ColorFive }"
+      (mouseenter)="isHovered2 = true"
+      (mouseleave)="isHovered2 = false">
+      No
+    </button>
+  </div>
+
+  </div>
+</div>
+
+<app-modal-message
+  [isVisible]="isModalVisible" 
+  [errorMessage]="errorMessage" 
+  [title]="title" 
+  [isSuccess]="isSuccess" 
+  [isLogin] = "isLogin"
+  [colorOne] = "colorOneMessage"
+  [messageButton] = "messageButton"
+  [colorTwo] = "colorTwoMessage">
+</app-modal-message>
+
+</div>
+ 
+

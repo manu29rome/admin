@@ -1,0 +1,299 @@
+.chat-container {
+  width: 100%; /* Ancho completo del contenedor */
+  margin: 0 auto; /* Centrar el contenedor */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.scrollbarList {
+  overflow: auto; /* Para permitir el desplazamiento */
+  scrollbar-width: none; /* Para Firefox */
+}
+
+.scrollbarList::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari y otros navegadores */
+}
+
+.chat-container ::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari y Edge */
+}
+
+.messages-container {
+  height: calc(100% - 124px);
+  overflow-y: auto; /* Habilitar scroll cuando los mensajes excedan la altura */
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.messages-container::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari y Edge */
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.received {
+  justify-content: flex-start;
+}
+
+.sent {
+  justify-content: flex-end;
+}
+
+.message-text {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+  font-size: 14px;
+}
+
+.sent .message-text {
+  background-color: #a3d5f5; /* Color diferente para los mensajes enviados */
+}
+
+.chat-controls {
+  display: flex;
+  background-color: #fff;
+}
+
+.chat-input {
+  flex: 1;
+  font-size: 10px;
+  background-color: #EEEDED;
+}
+
+.send-button {
+  background-color: transparent; /* Fondo transparente */
+  color: #4CAF50; /* Color del icono */
+  border: none; /* Sin borde */
+  cursor: pointer;
+  padding: 0; /* Sin padding */
+  font-size: 20px; /* Tamaño del icono */
+  margin-left: 8px;
+}
+
+.upload-file {
+  margin-left: 8px;
+}
+.upload-button {
+  background-color: transparent; /* Fondo transparente */
+  border: none; /* Sin borde */
+  cursor: pointer;
+  padding: 0; /* Sin padding */
+  margin-left: 8px; /* Espacio entre botones */
+  font-size: 1.2em; /* Tamaño del icono */
+}
+
+.upload-label {
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  margin-left: 8px; /* Espacio entre botones */
+  font-size: 20px; /* Tamaño del icono */
+}
+
+@media (max-width: 768px) {
+  .custom-height {
+    height: 92vh; /* 100% de la altura de la ventana en dispositivos móviles */
+  }
+}
+
+ /* Estilo para dispositivos móviles */
+ @media (max-width: 768px) {
+  .chat-container {
+    width: 100%; /* Ancho completo en dispositivos móviles */
+    height: 92%; 
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.chat-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  resize: none; /* Impide cambiar el tamaño manualmente */
+  overflow-y: hidden; /* Evita el scroll vertical */
+}
+
+.chat-input::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari y Edge */
+}
+
+.image-container {
+  bottom: 130px;
+  max-height: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centramos el contenido */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 16px;
+  background-color: #f8f9fa;
+  box-shadow: 0px 2px 4px rgba(175, 175, 175, 0.1);
+  width: 100%; /* Ocupa el 100% del ancho */
+  position: relative;
+}
+
+.image-preview-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.image-preview {
+  width: 100px; /* Tamaño pequeño para la vista previa */
+  height: auto;
+  margin-right: 10px;
+}
+
+.remove-image-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.pasted-image-container {
+  display: flex;
+  justify-content: center; /* Centra la imagen horizontalmente */
+  position: relative; /* Para posicionar el botón de cerrar */
+}
+
+.pasted-image {
+  max-height: 94%;
+  max-width: 90%; /* Ajusta el tamaño de la imagen *//* Limita la altura de la imagen */
+  object-fit: contain; /* Mantiene la proporción de la imagen */
+  border: 1px solid rgb(141, 141, 141);
+  position: relative;
+}
+
+.close-button {
+  position: absolute; /* Posiciona el botón en la esquina de la imagen */
+  top: 0;
+  right: 0;
+  background: transparent; /* Sin fondo */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
+  color: black; /* Cambia el color del icono si deseas */
+  font-size: 20px; /* Ajusta el tamaño del icono */
+}
+
+.message-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid white; /* Borde negro de 2px */
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-controls {
+  /* Contenedor de controles de chat */
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  transition: margin-bottom 0.3s; /* Transición suave al abrir/cerrar */
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 95px; /* Ajusta para que quede justo encima del chat */
+  left: 10px;
+  width: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  display: none;
+  transition: all 0.3s ease-in-out;
+  z-index: 10; /* Asegura que esté encima */
+}
+
+.emoji-picker.open {
+  display: block; /* Muestra el contenedor cuando está activo */
+}
+
+.shifted {
+  margin-bottom: 30%; /* Desplaza hacia arriba cuando el picker está abierto */
+}
+
+.emoji-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.emoji-mart-anchors {
+  display: none !important;
+}
+
+.file-container {
+  bottom: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centramos el contenido */
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 16px;
+  background-color: #f8f9fa;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ocupa el 100% del ancho */
+  position: relative;
+}
+
+.file-icon {
+  color: #6c757d;
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #333;
+  max-width: 60%; /* Limita el ancho del nombre del archivo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center; /* Centramos el texto */
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  padding-right: 5px;
+  cursor: pointer;
+  color: #000000;
+  margin-left: 12px;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.emoji-button {
+  font-size: 18px; /* Ajusta el tamaño */
+  color: rgb(255, 255, 255); /* Hace que el emoji sea gris */
+  filter: grayscale(100%) brightness(70%);
+}
+
+.panel {
+  background: rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(14px);
+}
+

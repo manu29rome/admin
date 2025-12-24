@@ -1,0 +1,11 @@
+@media (max-width: 400px) {
+  .hide-on-small {
+    display: none;
+  }
+}
+
+.panel {
+  background: rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(14px);
+  height: 115%;
+}

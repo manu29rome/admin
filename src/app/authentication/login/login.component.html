@@ -1,0 +1,74 @@
+<div class="w-full h-full flex justify-center items-center"
+[ngStyle]="{
+       'background-image': 'url('+urlImageBackground+')',
+    'background-size': 'cover',
+    'background-position': 'center',
+    'background-repeat': 'no-repeat',
+    'width': '100vw',
+    'height': '100vh',
+    'background-color': '#666666'
+     }">
+
+
+<div class="login-container">
+
+  <!-- Panel izquierdo -->
+  <div class="left-panel justify-center items-center">
+      <img [src]="urlLogoCompany" alt="icon" class="h-[120px]  border-white  p-2"> 
+
+
+    <h2 class="left-title">¡Bienvenido!</h2>
+
+    <p class="left-text">
+      Bienvenido a {{ clientData.nameCompany ?? 'SuiteXtech'}}. Autentíquese con su usuario para continuar.
+    </p>
+
+    <button class="btn-learn custom-hover" [ngStyle]="{ 'background-color': currentColor }" >¡Ayuda!</button>
+  </div>
+
+  <!-- Panel derecho -->
+  <div class="right-panel justify-center items-center ">
+    <h3 class="right-title font-semibold">{{ clientData.nameCompany ?? 'SuiteXtech'}}</h3>
+
+    <div class="form-group w-full">
+      <label>Usuario</label>
+      <div class="flex input-control "> 
+
+      <input [(ngModel)]="user" 
+        id="email" 
+        name="email" 
+        type="email" 
+        autocomplete="email" 
+        placeholder="suitextech@example.com" 
+        required 
+        class="bg-transparent border-none focus:outline-none focus:ring-0 w-full">
+
+      </div> 
+    </div>
+
+
+    <button class="btn-primary custom-hover" [disabled]="isLoading" [ngStyle]="{ 'background-color': currentColor }" (click)="login()">
+      <div *ngIf="isLoading" class="absolute inset-0 flex items-center justify-center">  
+        <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> 
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/> 
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/> 
+        </svg> 
+      </div> 
+      <span [class.opacity-0]="isLoading">Continuar</span> 
+    </button>
+
+    <div class="forgot-link">
+      <a  [routerLink]="['/email-recovery']">¿Olvidó su usuario?</a>
+    </div>
+  </div>
+
+  <app-modal-message 
+    [isVisible]="isModalVisible" 
+    [errorMessage]="errorMessage" 
+    [title]="title" 
+    [isSuccess]="isSuccess" 
+    (closeModalEvent)="closeModal()">            
+  </app-modal-message>
+  
+  </div>
+</div>

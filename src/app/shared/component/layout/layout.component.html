@@ -1,0 +1,132 @@
+
+<div class="min-h-screen bg-gray-50/50" [ngStyle]="{'background-color': '#F5F5F5' }">
+<div
+  [ngStyle]="{
+    'background-image': 'url(' + iconBackground + ')',
+    'background-size': 'auto',
+    'background-repeat': 'repeat',
+    'background-position': 'top left',
+    'opacity': '0.5',
+    'pointer-events': 'none',
+    'position': 'fixed',         
+    'top': '0',
+    'left': '0',
+    'width': '100%',
+    'height': '100%',
+    'z-index': '0'
+  }">
+</div>
+  <app-sidebar (sidebarToggle)="onSidebarToggle($event)" class="z-40">
+    
+  </app-sidebar>
+    <div [ngClass]="isExpanded ? 'xl:ml-60' : 'xl:ml-12'">
+      <nav class="fixed inset-x-0 w-full z-10 top-0">
+        <app-header />
+      </nav>
+      <div > 
+        <router-outlet/>
+      <!-- <div class="text-blue-gray-600">
+        <app-footer/>
+      </div> -->
+    </div>
+    </div>
+  </div>
+
+
+  
+<div class="fixed bottom-1 right-1 z-50">
+
+  <!-- Botón de flecha -->
+  <button 
+    (click)="toggleMenu()"
+    class="flex items-center justify-center p-2 rounded-full bg-gray-900 hover:bg-gray-700 transition shadow-xl"
+  >
+    <img *ngIf="!isMenuOpen"
+  [src]="iconYounger"
+  class="w-6 h-6 scale-y-[-1] rotate-90 opacity-80 invert brightness-200 transition-transform duration-300"
+  alt="Toggle"
+/>
+
+<img *ngIf="isMenuOpen"
+  [src]="iconYounger"
+  class="w-6 h-6 scale-x-[-1] rotate-90 opacity-80 invert brightness-200 transition-transform duration-300 "
+  alt="Toggle"
+/>
+
+  </button>
+
+  <!-- Contenedor del menú (vertical, pegado a la derecha) -->
+  <div 
+    *ngIf="isMenuOpen"
+    class="mt-3 flex flex-col items-end space-y-2 animate-slide-up"
+  >
+    <!-- Botón Chat -->
+    <a 
+      target="_blank"
+      (click)="openChat()"
+      class="p-2 bg-gray-800 rounded-lg text-white w-10 h-10 flex items-center justify-center hover:bg-gray-700"
+    >
+<!-- chat.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
+  <path d="M4 4h16v12H5.17L4 17.17V4z"/>
+</svg>
+
+    </a>
+
+    <!-- Botón Configuración -->
+    <a 
+      href="https://tumejorsite.com/configuracion"
+      target="_blank"
+      class="p-2 bg-gray-800 rounded-lg text-white w-10 h-10 flex items-center justify-center hover:bg-gray-700"
+    >
+      <!-- settings.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" width="24" height="24" viewBox="0 0 24 24">
+  <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.027 7.027 0 0 0-1.62-.94l-.36-2.54A.5.5 0 0 0 13.98 2h-3.96a.5.5 0 0 0-.49.42l-.36 2.54c-.6.24-1.15.56-1.63.94L5.15 5.26a.5.5 0 0 0-.61.22L2.62 8.8a.5.5 0 0 0 .12.64L4.77 11c-.05.31-.07.65-.07.98s.02.67.07.98l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.62.23l2.39-.96c.48.38 1.03.7 1.63.94l.36 2.54c.06.28.29.42.51.42h3.96c.28 0 .45-.14.51-.42l.36-2.54c.6-.24 1.15-.56 1.62-.94l2.39.96c.22.1.49 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5S10.07 8.5 12 8.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+</svg>
+
+    </a>
+
+    <!-- Botón Ayuda -->
+    <a 
+      href="https://tumejorsite.com/ayuda"
+      target="_blank"
+      class="p-2 bg-gray-800 rounded-lg text-white w-10 h-10 flex items-center justify-center hover:bg-gray-700"
+    >
+      <!-- settings.svg -->
+<!-- help.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="white" width="24" height="24" viewBox="0 0 24 24">
+  <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-.88-5h1.75c0-2.5 3.13-2.31 3.13-5 0-1.93-1.57-3.5-3.5-3.5S9 6.07 9 8h2c0-.83.67-1.5 1.5-1.5S14 7.17 14 8c0 1.88-3.13 2.31-3.13 5z"/>
+</svg>
+
+
+    </a>
+  </div>
+
+</div>
+
+
+
+<!-- <div class="fixed bottom-5 right-5 space-y-2 z-50 "> 
+  <button [ngStyle]="{'background-color': 'transparent'}" 
+  (click)="openChat()" 
+  class="text-white focus:outline-none flex items-center justify-center space-x-2 h-[44] z-50" 
+  title="Chat Interno"> <img [src]="iconChat" alt="Perfil" class=" h-7 w-7 object-cover opacity-60"> Icono de chat más pequeño 
+</button> </div> -->
+
+ 
+<button #boton (click)="playNotificationSound()" class="hidden">Clic automático</button>
+<div *ngIf="isChatOpen">
+  <app-chat></app-chat>
+</div>
+
+<app-modal-message
+[isVisible]="isModalVisible" 
+[errorMessage]="errorMessage" 
+[title]="title" 
+[isSuccess]="isSuccess" 
+[isLogin] = "isLogin"
+[colorOne] = "colorOneMessage"
+[messageButton] = "messageButton"
+[colorTwo] = "colorTwoMessage">
+</app-modal-message>
+

@@ -1,0 +1,1102 @@
+<div class="h-[92vh]">
+<div class=" scale-90 origin-top-left w-[111%]">
+<div *ngIf="isViewDomain" class=" flex justify-between items-center p-2 pt-[44px]  ">
+   <div class="relative text-lg font-bold text-black p-3 w-full bg-white/80 justify-center flex ml-1 mr-1 mt-4 rounded-2xl">
+    <span [ngStyle]="{ 'color': clientData.ColorOne }">Mis Compañias</span>
+    <!-- <span>{{nameRolSelect}}</span> -->
+  </div>
+</div>
+
+<div class="w-full max-h-[calc(100vh-150px)]">
+  <div class="relative w-[98%] ml-4 px-6 py-4 mt-2 rounded-xl bg-white/60 backdrop-blur-md shadow-sm justify-end">
+    
+      <!-- 🔢 Total de roles -->
+      <div class="flex items-center gap-2 text-sm text-gray-800 ml-1">
+        <img [src]="iconCompany" alt="Nuevo" class="h-5 w-5 object-cover">
+        <span class="text-[14px]" >Total compañias: <strong class="text-black text-[14px] ml-2">{{ companies.length }}</strong></span>
+      </div>
+  </div>
+   
+  </div>
+
+
+<div *ngIf="isViewDomain" class="grid gap-2 p-4" style="grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));">
+
+<div *ngFor="let company of companies"
+  class="relative rounded-2xl shadow-md border border-gray-300 p-5 
+         bg-white/80 backdrop-blur-md transition-all duration-300 
+         hover:shadow-2xl hover:-translate-y-1 ">
+
+  <!-- Paleta de colores -->
+  <div class="absolute top-4 right-4 flex flex-col space-y-1.5">
+    <ng-container
+      *ngFor="let color of [company.colors?.colorOne, company.colors?.colorTwo, company.colors?.colorThree, company.colors?.colorFour, company.colors?.colorFive]">
+      <div class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-sm"
+        [ngStyle]="{'background-color': color}"></div>
+    </ng-container>
+  </div>
+
+  <!-- Logo en círculo -->
+  <div class="flex justify-center">
+    <div class="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center shadow-sm overflow-hidden">
+      <img [src]="company.urlLogo" 
+           class="h-14 object-contain cursor-pointer transition-transform hover:scale-105"
+           (click)="OpenModalAddUpadte(company?.nameCompany!, company?.idClient!, 2)">
+    </div>
+  </div>
+
+  <!-- Nombre -->
+  <p class="mt-3 text-center text-base font-bold text-gray-800 truncate"
+    [title]="company.nameCompany">
+    {{ company.nameCompany }}
+  </p>
+
+  <!-- Info -->
+  <div class="mt-4 space-y-2 text-sm text-gray-600">
+    <div class="flex justify-between">
+      <span class="font-medium">Dominio:</span>
+      <span>{{ company.domain || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">NIT:</span>
+      <span>{{ company.nit || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">País:</span>
+      <span>{{ company.country || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Creado por:</span>
+      <span>{{ company.createBy || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Estado:</span>
+      <span class="inline-block px-2 py-0.5 text-xs rounded-full font-semibold shadow-sm"
+        [ngClass]="{
+          'bg-green-100 text-green-700': company.Status === 'Activo',
+          'bg-red-100 text-red-700': company.Status === 'Inactivo',
+          'bg-yellow-100 text-yellow-700': company.Status !== 'Activo' && company.Status !== 'Inactivo'
+        }">
+        {{ company.Status  || '-' }}
+      </span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Creado el:</span>
+      <span>{{ company.dateCreate || '-' }}</span>
+    </div>
+  </div>
+
+  <!-- Footer Acciones -->
+  <div class="mt-4 pt-3 border-t flex justify-around items-center gap-3">
+    <ng-container *ngFor="let action of getCompanyActions(company)">
+      <button (click)="action.click()" [title]="action.title"
+        *ngIf="action.title !== 'Editar' && action.title !== 'Eliminar' ||
+              (action.title === 'Editar' && isUpdateDomain) ||
+              (action.title === 'Eliminar' && isDeleteDomain)"
+        [ngClass]="{
+          'bg-gray-50 hover:bg-gray-100': action.title === 'Usuarios',
+          'bg-yellow-50 hover:bg-yellow-100': action.title === 'Editar',
+          'bg-blue-50 hover:bg-blue-100': action.title === 'Ver',
+          'bg-red-50 hover:bg-red-100': action.title === 'Eliminar'
+        }"
+        class="p-2 rounded-full shadow-sm transition flex items-center gap-1">
+        <img [src]="action.icon" class="w-5 h-5" />
+        <span *ngIf="action.title === 'Usuarios'" class="text-sm font-semibold">{{ company.tatolUser }}</span>
+      </button>
+    </ng-container>
+  </div>
+</div>
+
+
+
+  <!-- Botón nuevo -->
+  <div *ngIf="companies.length < 5 && isUpdateDomain"
+    class="flex items-center justify-center h-[400px] rounded-2xl shadow-md  border-2 border-gray-300 bg-white/10 backdrop-blur-md">
+    <button class="w-16 h-16 rounded-full flex items-center justify-center text-white transition hover:scale-110"
+      [ngStyle]="{'background-color': clientData.ColorOne}" (click)="OpenModalAddUpadte('Nuevo', '', 1)">
+      <img [src]="iconPlus" class="w-6 h-6 object-cover">
+    </button>
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- Modal -->
+<div *ngIf="isModalView && isViewDomain"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-30">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-auto p-6">
+
+    <!-- Título -->
+    <div class="text-center text-lg font-semibold pb-3 border-b"
+      [ngStyle]="{ 'border-color': clientData.ColorOne, 'color': 'black' }">
+      Usuarios Asociados {{ nameCompany }}
+    </div>
+
+    <!-- Campo de búsqueda -->
+    <div class="flex items-center gap-2 mt-4 mb-2 px-1">
+      <i class="fas fa-search text-gray-500 ml-2"></i>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre o correo..."
+        class="flex-1 p-2 rounded-md bg-gray-100 focus:outline-none text-sm" />
+    </div>
+
+    <!-- Checkbox Seleccionar todos -->
+    <div *ngIf="filteredUsers().length > 0 && isUpdateDomain" class="flex items-center mb-2 px-1">
+      <input type="checkbox" [(ngModel)]="selectAllChecked" (change)="toggleSelectAll()" class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out"
+        [ngStyle]="{ 'color': clientData.ColorOne }" />
+      <label class="ml-2 text-sm text-gray-700">Seleccionar todos</label>
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div *ngIf="filteredUsers().length > 0; else noUsers" class="space-y-3 max-h-[40vh] overflow-auto px-1">
+      <div *ngFor="let user of filteredUsers()"
+        class="flex items-center gap-4 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+        <!-- Checkbox individual -->
+        <input *ngIf="isUpdateDomain" type="checkbox" [(ngModel)]="user.selected" (change)="toggleUserSelection(user)"
+          class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out" [ngStyle]="{ 'color': clientData.ColorOne }" />
+
+        <!-- Imagen -->
+        <div class="relative">
+          <img [src]="user.imageUrl" alt="Foto" class="w-10 h-10 rounded-full object-cover border" />
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white"
+            [ngStyle]="{ 'background-color': user.color }"></span>
+        </div>
+
+        <!-- Info -->
+        <div>
+          <p class="text-sm font-semibold">{{ user.fullName }}</p>
+          <p class="text-xs text-gray-600"><span class="font-semibold">Usuario:</span> {{ user.email }}</p>
+          <p class="text-xs text-gray-600"><span class="font-semibold">Rol:</span> {{ user.rol }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Si no hay usuarios -->
+    <ng-template #noUsers>
+      <div class="text-center text-gray-500 py-4">No hay usuarios asociados.</div>
+    </ng-template>
+
+    <!-- Botón de cerrar -->
+    <div class="mt-6 flex justify-end">
+      <button type="button" (click)="closeModalView()"
+        class="text-white h-[30px] text-sm items-center justify-center gap-2 rounded-[20px] shadow-md min-w-[200px] w-[48%] mr-2"
+        [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+        Cerrar
+      </button>
+      <button *ngIf="isUpdateDomain && isMigrate"
+        class="flex h-[30px] text-sm items-center justify-center gap-2 rounded-[20px] w-[48%] justify-center text-white" title="Migrar Usuarios"
+        (click)="OpenModalMigrate(idCompanyMigrate, userTotal)" [ngStyle]="{ 'background-color': clientData.ColorOne }">
+        Migrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensajes -->
+<div *ngIf="isMessageDelete" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl px-6 py-8 w-[90%] max-w-[400px] text-center relative">
+
+    <!-- Ícono con fondo -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="optionDelete" [src]="iconDelete" alt="Eliminar" class="h-14" />
+        <img *ngIf="optionUpdate" [src]="iconUpdate" alt="Actualizar" class="h-14" />
+        <img *ngIf="optionAdd" [src]="iconSaveBlack" alt="Guardar" class="h-14" />
+        <img *ngIf="optionMigrate" [src]="iconMigrate" alt="Migrar" class="h-14" />
+      </div>
+    </div>
+
+    <!-- Título y mensaje -->
+    <h2 class="text-lg font-bold text-gray-900">{{ messageTittle }}</h2>
+    <p class="text-sm text-gray-600 mt-2">{{ messageOption }}</p>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-3 mt-6 flex-wrap">
+      <button (click)="closeModalMessage()"
+        class="h-[30px] text-sm items-center justify-center gap-2 rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        No
+      </button>
+
+      <!-- Botón común con loading -->
+      <ng-container *ngIf="optionDelete || optionUpdate || optionAdd || optionMigrate">
+        <button (click)="
+            optionDelete ? DeleteCompany(idDelete) :
+            optionUpdate ? AddUpdateCompany('update') :
+            optionAdd ? AddUpdateCompany('add') :
+            optionMigrate ? MigrateUsersCompany() : null
+          "
+          class="relative h-[30px] text-sm items-center justify-center gap-2 rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }">
+          <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          </div>
+          <span [class.opacity-0]="isLoadingBack">Sí</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de Respuesta Mejorado -->
+<div *ngIf="showResponseModal"
+  class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm transition duration-300">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-[90%] max-w-[400px] text-center animate-fade-in">
+
+    <!-- Ícono con efecto -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="responseSuccess" [src]="iconSuccessful" alt="Éxito"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+
+        <img *ngIf="!responseSuccess" [src]="iconError" alt="Error"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="text-lg font-bold text-gray-800">{{ tittle }}</h2>
+
+    <!-- Mensaje -->
+    <p class="text-gray-600 mt-2 text-sm">{{ responseMessage }}</p>
+
+    <!-- Botón -->
+    <div class="mt-6">
+      <button (click)="messageAddUpdateCompany(responseSuccess)"
+        class="w-full h-[30px] text-sm items-center justify-center gap-2 rounded-[14px] font-semibold text-white transition duration-200 hover:brightness-110 shadow-md"
+        [ngStyle]="{'background-color': !responseSuccess ? clientData.ColorTwo : clientData.ColorOne}">
+        {{ !responseSuccess ? 'Entiendo' : 'Aceptar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div *ngIf="isModalMigrate && isViewDomain"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[80vh] overflow-auto p-6">
+
+    <!-- Título -->
+    <div class="border-b-2 pb-3 mb-4" [ngStyle]="{'border-color': clientData.ColorThree}">
+      <h2 class="text-xl font-bold text-center text-gray-800">
+        Migrar Usuarios {{ nameCompany }}
+      </h2>
+    </div>
+
+    <!-- Descripción -->
+    <p class="text-sm text-gray-600 mb-4 text-left">
+      Por favor, selecciona una compañía a la cual deseas migrar los usuarios.
+    </p>
+
+    <!-- Lista de compañías -->
+    <div class="space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+      <ng-container *ngFor="let company of companies">
+        <label *ngIf="company.idClient != isIdClient"
+          class="flex items-center justify-between p-2 rounded-lg border hover:bg-gray-100 transition">
+
+          <div class="flex items-center gap-3">
+            <input type="radio" name="companySelection" [value]="company.idClient" [(ngModel)]="isIdClientMigrate"
+              class="w-4 h-4 accent-gray-500" />
+
+            <span class="text-sm font-medium text-gray-800">{{ company.nameCompany }}</span>
+          </div>
+
+          <img [src]="company.urlLogo" alt="Logo" class="h-5 w-auto object-contain max-w-[40px]" />
+        </label>
+      </ng-container>
+    </div>
+
+    <!-- Botones -->
+    <div class="mt-6 flex justify-between gap-4">
+      <button type="button" (click)="ClosedModalMigrate()"
+        class="flex-1 h-[30px] text-sm items-center justify-center gap-2 rounded-full text-white shadow-md transition hover:opacity-90"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        Cerrar
+      </button>
+
+      <button (click)="OpenModalMessage('migrate', '')"
+        class="flex-1 h-[30px] text-sm items-center justify-center gap-2 rounded-full text-white shadow-md transition hover:opacity-90 relative"
+        [ngStyle]="{'background-color': clientData.ColorOne}">
+
+        <!-- Spinner -->
+        <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+        </div>
+
+        <span [class.opacity-0]="isLoadingBack">Migrar Usuarios</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<app-modal-message [isVisible]="isModalVisible" [errorMessage]="errorMessage" [title]="title" [isSuccess]="isSuccess"
+  [isLogin]="isLogin" [colorOne]="colorOneMessage" [messageButton]="messageButton" [colorTwo]="colorTwoMessage">
+</app-modal-message>
+
+
+
+<!-- Modal lateral derecho -->
+
+<div *ngIf="isModalAddUpdate && isViewDomain"
+  class="fixed top-[45px] right-2 z-10 w-2/5 min-w-[450px] max-w-[1100px] text-left p-4 overflow-y-auto scrollbar-hide bg-white shadow-2xl rounded-2xl border border-gray-200"
+  style="height: calc(100vh - 50px);">
+  <!-- Encabezado -->
+  <div class="relative mb-4 text-center"
+  [ngStyle]="{'border-color': clientData.ColorOne, 'border-bottom-width': '2px', 'border-style': 'solid'}">
+  <h2 class="text-[17px] leading-normal font-semibold text-black pb-2">Compañia {{ nameAddUpdate }}</h2>
+  <button 
+    (click)="ClosedModalAddUpadte()"
+    class="absolute right-0 top-0  text-gray-900 hover:text-gray-400 text-[17px] leading-normal font-semibold pb-2">
+    ✕
+  </button>
+</div>
+
+<div class="flex flex-col gap-2" >
+
+  <div class="flex gap-2 justify-center">
+
+      <button class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] " 
+       (click)="OpenModalGeneral()"
+       [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalGeneral ? clientData.ColorOne : 'transparent'}">General</button>
+
+       <button class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] " 
+       (click)="OpenModalLegal()"
+       [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalLegal ? clientData.ColorOne : 'transparent'}">R. Legal</button>
+
+       <button class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] " 
+       (click)="OpenModalDesing()"
+       [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalDesign? clientData.ColorOne : 'transparent'}">Perzonalización</button>
+
+       <button class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] " 
+       (click)="OpenModalConfigure()"
+       [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalConfigure ? clientData.ColorOne : 'transparent'}">Configuración</button>
+
+    </div>
+
+    <div  class="overflow-y-auto scrollbar-hide bg-white border border-gray-300 p-4 justify-center gap-4 "
+        style="height: calc(100vh - 220px);">
+        <div class=" scale-90 origin-top-left w-[111%] h-[90%]">
+        <!-- Nombre del dominio -->
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">* Nombre Compañia:</label>
+          <input type="text" placeholder="suitextech"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateCompany.nameCompany}"
+            style="background-color: #EEEDED;" maxlength="50" [(ngModel)]="dataAddUpdateCompany.nameCompany"
+            [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">* Dominio:</label>
+          <input type="text" placeholder="suitextech.com"
+            class=" block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateCompany.domain}" maxlength="60"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.domain" [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">* NIT:</label>
+          <input type="text" placeholder="12345678-1" maxlength="20"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateCompany.nit}"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.nit" [disabled]="isView" />
+        </div>
+
+        <!-- Selección del estado del dominio -->
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">* Estado</label>
+          <select
+            class="block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.Status" [disabled]="isView">
+            <option *ngFor="let status of typeStatus" [value]="status.IdStatus">
+              {{ status.Status }}
+            </option>
+          </select>
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">Numero Celular:</label>
+          <div class="flex items-center w-full">
+            <select
+              class="w-16 block w-2/6 px-3 py-2 border rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+              style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.codeContry" [disabled]="isView">
+              <option *ngFor="let country of countriesCode" [value]="country.dial_code">
+                {{ country.dial_code }}
+              </option>
+            </select>
+            <input type="text" placeholder="3121234512" maxlength="11" pattern="\d*" inputmode="numeric"
+              (input)="validarSoloNumeros($event, 1)"
+              class="flex-grow px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold ml-1"
+              style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.phoneMovil" [disabled]="isView" />
+          </div>
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">Numero de telefono:</label>
+          <input type="text" placeholder="6589562" maxlength="11" pattern="\d*" inputmode="numeric"
+            (input)="validarSoloNumeros($event, 3)"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.phoneNumberCompany"
+            [disabled]="isView" />
+        </div>
+
+        <!-- Selección -->
+        <div *ngIf="isModalGeneral" class="p-1 text-left w-full">
+          <div class="flex w-full">
+
+            <div class="w-1/2">
+              <label class="font-semibold text-sm">País:</label>
+              <div class="flex border rounded-md shadow-sm relative">
+
+                <!-- Selector de código de país -->
+                <select [(ngModel)]="selectedCountryCode"
+                  class="block w-[0px] focus:outline-none text-sm font-semibold justify-center"
+                  style="background-color: #EEEDED; visibility: hidden;" [disabled]="isView">
+                  <option *ngFor="let country of countries" [value]="country.isoCode">
+                    {{ country.name }}
+                  </option>
+                </select>
+
+                <!-- Input para escribir el país -->
+                <input type="text" [(ngModel)]="countryInput" (input)="filterCountries()" [disabled]="isView"
+                  autocomplete="new-password"
+                  class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold"
+                  style="background-color: #EEEDED;" />
+
+                <!-- Lista de sugerencias -->
+                <ul *ngIf="filteredCountries.length && !isView"
+                  class="absolute top-full left-[10%] z-10 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md">
+                  <li *ngFor="let c of filteredCountries" (click)="selectCountry(c)"
+                    class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                    {{ c.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="w-1/2 ml-1 relative">
+              <label class="font-semibold text-sm">Dep. o Estado:</label>
+              <div class="flex border rounded-md shadow-sm relative">
+
+                <!-- Selector de código del estado -->
+                <select (change)="onStateChange()"
+                  class="block w-[0px] focus:outline-none text-sm font-semibold justify-center"
+                  style="background-color: #EEEDED; visibility: hidden;" [(ngModel)]="selectedStatesCode"
+                  [disabled]="isView || !selectedCountryCode">
+                  <option *ngFor="let state of states" [value]="state.isoCode">
+                    {{ state.isoCode }}
+                  </option>
+                </select>
+
+                <!-- Input para escribir el estado -->
+                <input type="text" class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold"
+                  style="background-color: #EEEDED;" [(ngModel)]="stateInput" (input)="filterStates()"
+                  autocomplete="new-password" [disabled]="isView" />
+
+                <!-- Lista de sugerencias -->
+                <ul *ngIf="filteredStates.length && !isView"
+                  class="absolute top-full left-[10%] z-10 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md text-sm">
+                  <li *ngFor="let s of filteredStates" (click)="selectState(s)"
+                    class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                    {{ s.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Selección -->
+        <div *ngIf="isModalGeneral" class="p-1 text-left w-full">
+          <div class="flex w-full">
+
+            <div class="w-1/2 ml-1 relative">
+              <label class="font-semibold text-sm">Ciudad:</label>
+              <div class="flex border rounded-md shadow-sm relative">
+
+                <!-- Select de código si lo usas (opcional) -->
+                <select class="block w-[0px] focus:outline-none text-sm font-semibold justify-center"
+                  style="background-color: #EEEDED;" [(ngModel)]="selectedCityCode"
+                  [disabled]="isView || !cities.length">
+                  <option *ngFor="let city of cities" [value]="city.name">
+                    {{ city.name }}
+                  </option>
+                </select>
+
+                <!-- Input de ciudad con autocompletado -->
+                <input type="text" class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold"
+                  style="background-color: #EEEDED;" [(ngModel)]="cityInput" (input)="filterCities()"
+                  autocomplete="new-password" [disabled]="isView" />
+
+                <!-- Lista desplegable de sugerencias -->
+                <ul *ngIf="filteredCities.length && !isView"
+                  class="absolute top-full left-[10%] z-10 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md text-sm">
+                  <li *ngFor="let c of filteredCities" (click)="selectCity(c)"
+                    class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                    {{ c.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+
+            <div class="w-1/2 ml-1">
+              <label class="font-semibold text-sm">Codigo Postal:</label>
+              <input type="text" placeholder="252211"
+                class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+                style="background-color: #EEEDED;" maxlength="11" [(ngModel)]="dataAddUpdateCompany.codePostal"
+                [disabled]="isView" />
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">Detalle de dirección:</label>
+          <input type="text" placeholder="carrera 123" maxlength="100"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.addressCompany" [disabled]="isView" />
+        </div>
+
+        <label *ngIf="isModalGeneral" class="flex items-center space-x-2 mt-2">
+              <label class="block text-center font-bold text-sm w-full">Configuración Correo</label>
+            </label>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">Correo electronico:</label>
+          <input type="email" placeholder="suitextech@suitextech.com"
+            class=" block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="60" [(ngModel)]="dataAddUpdateCompany.emailCompany!.email"
+            (blur)="validateEmailField()" [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">Contraseña:</label>
+          <input type="text" placeholder="***********"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="50" [(ngModel)]="dataAddUpdateCompany.emailCompany!.password"
+            [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">ClientId:</label>
+          <input type="text" placeholder="***********"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="50" 
+            [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">ClientSecret:</label>
+          <input type="text" placeholder="***********"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="50" 
+            [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">RefreshToken:</label>
+          <input type="text" placeholder="***********"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="50" 
+            [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalGeneral" class="p-1 text-left">
+          <label class="font-semibold text-sm">ClientTenant:</label>
+          <input type="text" placeholder="***********"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" maxlength="50" 
+            [disabled]="isView" />
+        </div>
+
+        <label *ngIf="isModalGeneral" class="flex items-center space-x-2 mt-2">
+              <label class="block text-center font-bold text-sm w-full">Areas de Compañia</label>
+            </label>
+
+            <div *ngIf="isModalGeneral" class="h-[126px] mt-1 w-[100%] min-w-[210] rounded-md mb-4 justify-center "
+              [ngClass]="{ 'opacity-50 pointer-events-none': isView}">
+              <div class="flex w-full items-center justify-center gap-1"> <!-- gap-1 = 4px -->
+                <div class="w-[88%] h-[30px]">
+                  <input placeholder="Recursos Humanos..." [(ngModel)]="inputValueArea" type="text"
+                    class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold  text-center h-[30px]"
+                    style="background-color: #EEEDED;" />
+                </div>
+                <button class="w-[12%] h-[30px] flex items-center justify-center rounded-md" (click)="addItemArea()"
+                  [ngStyle]="{'background-color': clientData.ColorOne }">
+                  <img [src]="iconCheck" alt="Perfil" class="w-4 h-4 object-cover opacity-80" />
+                </button>
+              </div>
+              <div class="h-[96px] overflow-y-auto border border-gray-300 rounded-md p-2 space-y-1 mt-1"
+                style="background-color: #F7F7F7;">
+                <div *ngFor="let word of dataAddUpdateCompany.listAreas"
+                  class="flex justify-between items-center bg-gray-100 px-2 py-1 rounded">
+                  <span class="text-sm font-semibold text-gray-800">{{ word }}</span>
+                  <button (click)="removeItemArea(word)" class="text-black font-bold">
+                    ×
+                  </button>
+                </div>
+              </div>
+            </div>
+
+        <div *ngIf="isModalLegal" class="p-1 text-left">
+          <label class="font-semibold text-sm">* Nombre completo representante legal:</label>
+          <input type="text" placeholder="nombre" maxlength="100"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateCompany.legalRepresentative!.nameLegalRepresentatives}"
+            style="background-color: #EEEDED;"
+            [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.nameLegalRepresentatives" [disabled]="isView" />
+        </div>
+
+        <!-- Selección -->
+        <div *ngIf="isModalLegal" class="p-1 text-left w-full">
+          <label class="font-semibold text-sm">* Documento de identidad:</label>
+          <div class="flex w-full">
+            <select
+              class="block w-2/4 px-3 py-2 border rounded-md shadow-sm focus:outline-none text-sm font-semibold text-sm"
+              style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.typeDocument"
+              [disabled]="isView">
+              <option *ngFor="let doc of typeDocuments" [value]="doc.IdTypeDocuments">
+                {{ doc.name }}
+              </option>
+            </select>
+            <input type="text" placeholder="123456" maxlength="20"
+              class="w-2/4 px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold ml-1"
+              [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateCompany.legalRepresentative!.documentNumber}"
+              style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.documentNumber"
+              [disabled]="isView" />
+          </div>
+        </div>
+
+        <div *ngIf="isModalLegal" class="p-1 text-left">
+          <label class="font-semibold text-sm">Correo electronico:</label>
+          <input type="email" placeholder="suitextech@suitextech.com" maxlength="120"
+            class=" block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.email"
+            (blur)="validateEmailField2()" [disabled]="isView" />
+        </div>
+
+        <div *ngIf="isModalLegal" class="p-1 text-left">
+            <label class="font-semibold text-sm">Número Celular:</label>
+            <div class="flex items-center w-full">
+              <select
+                class="block w-2/6 px-3 py-2 border rounded-md shadow-sm focus:outline-none text-sm font-semibold text-sm"
+                style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.codeContry"
+                [disabled]="isView">
+                <option *ngFor="let country of countriesCode" [value]="country.dial_code">
+                  {{ country.dial_code }}
+                </option>
+              </select>
+              <input type="text" placeholder="3121234512" maxlength="11" pattern="\d*" inputmode="numeric"
+                (input)="validarSoloNumeros($event, 2)"
+                class="flex-grow px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold ml-1 bg-[#EEEDED] text-sm"
+                [(ngModel)]="dataAddUpdateCompany.legalRepresentative!.numberMovil" [disabled]="isView" />
+            </div>
+          </div>
+
+
+    
+    <span *ngIf="isModalDesign"  class="block w-full text-center font-bold text-sm mt-4">Imagenes</span>   
+    <div *ngIf="isModalDesign" 
+      class="flex w-full min-w-[350px] h-[190px] bg-white items-center justify-center items-center gap-4">
+      <!-- Botón 1 -->
+      <input type="file" accept="image/*" #imageInput (change)="onImageSelected($event)" hidden [disabled]="isView" />
+      <div class="flex flex-col min-w-[200px] h-[150px] rounded-lg items-center justify-center"
+        style="background-color: #EEEDED;">
+      <button class="flex flex-col items-center justify-center"
+        style="background-color: #EEEDED;" (click)="imageInput.click()" [disabled]="isView">
+        <img *ngIf="selectedImage" [src]="selectedImage" alt="Imagen seleccionada"
+          class="w-auto h-[120px] object-contain">
+        <img *ngIf="!selectedImage" [src]="iconImage" alt="Imagen seleccionada"
+          class="w-[60px] h-[50px] object-contain">
+        <span *ngIf="!selectedImage" class="text-smmt-2">Selecciona imagen</span>
+        <span *ngIf="!selectedImage" class="text-sm">Minimo 1280px x 720px</span>
+      </button>
+      <button *ngIf="selectedImage && !isView"
+        class="justify-center  px-2 py-1 rounded z-10 transition-transform duration-200 hover:scale-110"
+        title="Quitar Imagen seleccionado" (click)="DeleteImage()">
+        <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+      </button>
+      </div>
+
+      <input type="file" accept="image/*" #iconInput (change)="onIconSelected($event)" hidden [disabled]="isView" />
+      <div
+        class="flex flex-col min-w-[150px] h-[150px] rounded-lg items-center justify-center"
+        style="background-color: #EEEDED;">
+        <button class="flex flex-col" style="background-color: #EEEDED;" (click)="iconInput.click()"
+          [disabled]="isView">
+          <img *ngIf="iconPreview" [src]="iconPreview" alt="Icono" class="w-auto h-[100px] object-contain">
+          <img *ngIf="!iconPreview" [src]="icon" alt="Icono por defecto" class="w-auto h-[50px] object-contain">
+          <span *ngIf="!iconPreview" class="text-smmt-2">Selecciona icono</span>
+          <span *ngIf="!iconPreview" class="text-[12px]">Minimo 90px x 90px</span>
+        </button>
+        <button *ngIf="iconPreview && !isView"
+        class=" justify-center  px-2 py-1 rounded z-10 transition-transform duration-200 hover:scale-105"
+        title="Quitar Icono seleccionado" (click)="DeleteIcon()">
+        <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+      </button>
+      </div>
+
+
+    </div>
+
+    <span *ngIf="isModalDesign"  class="block w-full text-center font-bold text-sm mt-2">Diseño de colores</span>
+          <div *ngIf="isModalDesign"  class="mt-2">
+
+            <!-- Primer checkbox con divs de colores -->
+            <div class="flex gap-2 p-2 ">
+              <input type="checkbox" id="color1" [checked]="selectedColorIndex === 1" (change)="toggleColorSelection(1)"
+                class="mr-2" [disabled]="isView" />
+              <div class="flex gap-2">
+                <div *ngFor="let color of colorOptions1" (click)="selectColor(color)"
+                  class="w-4 h-4 rounded-full cursor-pointer" [style.background]="color"></div>
+                <!-- Cambié el tamaño aquí -->
+              </div>
+            </div>
+            <!-- Segundo checkbox con divs de colores -->
+            <div class="flex gap-2 p-2">
+              <input type="checkbox" id="color2" [checked]="selectedColorIndex === 2" (change)="toggleColorSelection(2)"
+                class="mr-2" [disabled]="isView" />
+              <div class="flex gap-2">
+                <div *ngFor="let color of colorOptions2" (click)="selectColor(color)"
+                  class="w-4 h-4 rounded-full cursor-pointer" [style.background]="color"></div>
+              </div>
+            </div>
+
+            <!-- Tercer checkbox con divs blancos para seleccionar colores personalizados -->
+            <div class="flex gap-2 p-2">
+              <input type="checkbox" id="color2" [checked]="selectedColorIndex === 3" (change)="toggleColorSelection(3)"
+                class="mr-2" [disabled]="isView" />
+              <div class="flex gap-2">
+                <label for="colorDesign" class="font-semibold text-sm">Diseño de colores personalizado</label>
+              </div>
+            </div>
+
+            <div style="background-color: #EEEDED;" class="pt-2 pb-2"
+              [class.pointer-events-none]="dataAddUpdateCompany.colors?.option != 3"
+              [class.opacity-50]="dataAddUpdateCompany.colors?.option != 3">
+              <div class="flex items-center gap-2 p-1 w-full justify-center">
+                <input type="text" [(ngModel)]="colorOne" (ngModelChange)="onColorChange(1)"
+                  class="bg-white focus:outline-none w-24 text-center text-sm font-semibold" placeholder="#808080"
+                  maxlength="9" [disabled]="isView">
+                <div class="w-4 h-4 rounded-full cursor-pointer"
+                  [ngStyle]="{'background-color': isHexColorValidOne ? colorOne : 'gray'}">
+                </div>
+                <label class="block text-xs font-medium text-gray-700">Color 1</label>
+              </div>
+
+              <div class="flex items-center gap-2 p-1 w-full justify-center">
+                <input type="text" [(ngModel)]="colorTwo" (ngModelChange)="onColorChange(2)"
+                  class="bg-white focus:outline-none w-24 text-center text-sm font-semibold" placeholder="#808080"
+                  maxlength="9" [disabled]="isView">
+                <div class="w-4 h-4 rounded-full cursor-pointer"
+                  [ngStyle]="{'background-color': isHexColorValidTwo ? colorTwo : 'gray'}">
+                </div>
+                <label class="block text-xs font-medium text-gray-700">Color 2</label>
+              </div>
+
+              <div class="flex items-center gap-2 p-1 w-full justify-center">
+                <input type="text" [(ngModel)]="colorThree" (ngModelChange)="onColorChange(3)"
+                  class="bg-white focus:outline-none w-24 text-center text-sm font-semibold" placeholder="#808080"
+                  maxlength="9" [disabled]="isView">
+                <div class="w-4 h-4 rounded-full cursor-pointer"
+                  [ngStyle]="{'background-color': isHexColorValidThree ? colorThree : 'gray'}">
+                </div>
+                <label class="block text-xs font-medium text-gray-700">Color 3</label>
+              </div>
+
+              <div class="flex items-center gap-2 p-1 w-full justify-center">
+                <input type="text" [(ngModel)]="colorFour" (ngModelChange)="onColorChange(4)"
+                  class="bg-white focus:outline-none w-24 text-center text-sm font-semibold" placeholder="#808080"
+                  maxlength="9" [disabled]="isView">
+                <div class="w-4 h-4 rounded-full cursor-pointer"
+                  [ngStyle]="{'background-color': isHexColorValidFour ? colorFour : 'gray'}">
+                </div>
+                <label class="block text-xs font-medium text-gray-700">Color 4</label>
+              </div>
+
+              <div class="flex items-center gap-2 p-1 w-full justify-center">
+                <input type="text" [(ngModel)]="colorFive" (ngModelChange)="onColorChange(5)"
+                  class="bg-white focus:outline-none w-24 text-center text-sm font-semibold " placeholder="#808080"
+                  maxlength="9" [disabled]="isView">
+                <div class="w-4 h-4 rounded-full cursor-pointer"
+                  [ngStyle]="{'background-color': isHexColorValidFive ? colorFive : 'gray'}">
+                </div>
+                <label class="block text-xs font-medium text-gray-700">Color 5</label>
+              </div>
+            </div>
+          </div>
+
+
+
+          <span *ngIf="isModalConfigure" class="block w-full text-center font-bold text-sm">Tiempo Token</span>
+
+            <div *ngIf="isModalConfigure" class="p-1 text-left w-full">
+              <label class="font-semibold text-sm">Duracion del token de inicio de sesion</label>
+              <div class="flex w-full items-center justify-star">
+                <div class="w-1/4 mt-1">
+                  <input type="text"
+                    class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-smtext-center"
+                    style="background-color: #EEEDED;" maxlength="3" [(ngModel)]="dataAddUpdateCompany.timeUpdateToken"
+                    [disabled]="isView" />
+                </div>
+                <div class="w-1/4 ml-2">
+                  <label class="font-semibold text-sm">Horas.</label>
+                </div>
+              </div>
+            </div>
+
+            <span *ngIf="isModalConfigure" class="block w-full text-center font-bold text-sm">Inicio de Sesion</span>
+
+            <label *ngIf="isModalConfigure" class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox" [(ngModel)]="dataAddUpdateCompany.requestCode"
+                [disabled]="isView" />
+              <span class="font-semibold text-sm">Solicitar codigo de seguridad enviado al email </span>
+            </label>
+
+
+        <span *ngIf="isModalConfigure" class="block w-full text-center font-bold text-sm mt-4">Validacion Contraseña</span>
+
+        <div *ngIf="isModalConfigure" class="p-1 text-left w-full">
+          <label class="font-semibold text-sm">Tiempo cambio de Contraseña</label>
+          <div class="flex w-full items-center justify-star">
+            <div class="w-1/4  mt-2">
+              <input type="text" maxlength="3"
+                class="block px-3 w-full py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center"
+                style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateCompany.timeUpdatePasword"
+                [disabled]="isView" />
+            </div>
+            <div class="w-1/4 ml-2">
+              <label class="font-semibold text-sm">Dias.</label>
+            </div>
+            
+          </div>
+        </div>
+
+        <div *ngIf="isModalConfigure" class="p-1 text-left w-full">
+          <label class="font-semibold text-sm">Validaciones para la Contraseña</label>
+
+          <div class="gap-4 mt-1 ml-2">
+
+            <label class="flex items-center space-x-2 mt-2">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate1" [disabled]="isView" />
+              <span class="font-semibold text-sm">Minimo una letra Mayuscula.</span>
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate2" [disabled]="isView" />
+              <span class="font-semibold text-sm">Minimo una letra Minuscula.</span>
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate3" [disabled]="isView" />
+              <span class="font-semibold text-sm">Minimo un caracter Especial.</span>
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate4" [disabled]="isView" />
+              <span class="font-semibold text-sm">Minimo un caracter Numerico</span>
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate5" [disabled]="isView" />
+              <span class="font-semibold text-sm">No utilizar contraseñas anteriores.</span>
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate6" [disabled]="isView" />
+              <span class="font-semibold text-sm">Caracteres Minimos </span>
+              <input type="text" maxlength="2" [(ngModel)]="dataAddUpdateCompany.validatePassword!.minimumCharacters"
+                class="block px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center w-1/4 h-[30px]"
+                style="background-color: #EEEDED;" [disabled]="isView" />
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate7" [disabled]="isView" />
+              <span class="font-semibold text-sm">Caracteres Maximos </span>
+              <input type="text" maxlength="2" [(ngModel)]="dataAddUpdateCompany.validatePassword!.maximumCharacters"
+                class="block px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center w-1/4 h-[30px]"
+                style="background-color: #EEEDED;" [disabled]="isView" />
+            </label>
+
+            <label class="flex items-center space-x-2 mt-1">
+              <input type="checkbox" class="form-checkbox"
+                [(ngModel)]="dataAddUpdateCompany.validatePassword!.validate8" [disabled]="isView" />
+              <span class="font-semibold text-sm">Palabras no permitidas en la Contraseña.</span>
+            </label>
+
+            <div class="h-[126px] mt-1 w-[96%] min-w-[210] rounded-md mb-1"
+              [ngClass]="{ 'opacity-50 pointer-events-none': !dataAddUpdateCompany.validatePassword?.validate8 || isView}">
+              <div class="flex w-full items-center justify-center gap-1"> <!-- gap-1 = 4px -->
+                <div class="w-[88%] h-[30px]">
+                  <input placeholder="asdfgh" [(ngModel)]="inputValue" type="text"
+                    class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold  text-center h-[30px]"
+                    style="background-color: #EEEDED;" />
+                </div>
+                <button class="w-[12%] h-[30px] flex items-center justify-center rounded-md" (click)="addItem()"
+                  [ngStyle]="{'background-color': clientData.ColorOne }">
+                  <img [src]="iconCheck" alt="Perfil" class="w-4 h-4 object-cover opacity-80" />
+                </button>
+              </div>
+              <div class="h-[96px] overflow-y-auto border border-gray-300 rounded-md p-2 space-y-1 mt-1"
+                style="background-color: #F7F7F7;">
+                <div *ngFor="let word of dataAddUpdateCompany.validatePassword!.listWord"
+                  class="flex justify-between items-center bg-gray-100 px-2 py-1 rounded">
+                  <span class="text-sm font-semibold text-gray-800">{{ word }}</span>
+                  <button (click)="removeItem(word)" class="text-black font-bold">
+                    ×
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <span *ngIf="isModalConfigure" class="block w-full text-center font-bold text-sm mt-2">Configuración IPs</span>
+
+        <label *ngIf="isModalConfigure"  class="flex items-center space-x-2 mt-2 ">
+          <input type="checkbox" (ngModelChange)="onIpsChange(1)" class="form-checkbox"
+            [(ngModel)]="dataAddUpdateCompany.ipAuthorized!.authorized" [disabled]="isView" />
+          <span class="font-semibold text-sm">Rango de IPs Autorizadas:
+          </span>
+        </label>
+
+        <div *ngIf="isModalConfigure"  class="h-[190px] mt-1 w-[96%] rounded-md "
+          [ngClass]="{ 'opacity-50 pointer-events-none':!dataAddUpdateCompany.ipAuthorized?.authorized || isView}">
+          <div class="flex w-full items-center justify-center gap-1"> <!-- gap-1 = 4px -->
+            <div class="w-[42%]">
+              <input placeholder="127.0.0.1" [(ngModel)]="ipAuthorized1" type="text"
+                class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center h-[30px]"
+                style="background-color: #EEEDED;" />
+            </div>
+            <div class="w-[6%] justify-center">
+              <label class="block text-[12px]">a</label>
+            </div>
+            <div class="w-[42%]">
+              <input placeholder="127.0.0.9" [(ngModel)]="ipAuthorized2" type="text"
+                class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center h-[30px]"
+                style="background-color: #EEEDED;" />
+            </div>
+            <button class="w-[10%] h-[30px] flex items-center justify-center rounded-md" (click)="addAuthorizedIps()"
+              [ngStyle]="{'background-color': clientData.ColorOne }">
+              <img [src]="iconCheck" alt="Perfil" class="w-4 h-4 object-cover opacity-80" />
+            </button>
+          </div>
+          <div class="h-[154px] overflow-y-auto border border-gray-300 rounded-md p-2 space-y-1 mt-1"
+            style="background-color: #F7F7F7;">
+            <div *ngFor="let item of dataAddUpdateCompany.ipAuthorized!.ips "
+              class="flex justify-between items-center bg-gray-100 px-2 py-1 rounded">
+              <span class="text-sm font-semibold text-gray-800">{{ item.ip1 | uppercase }} - {{ item.ip2 | uppercase
+                }}</span>
+              <button class="text-black font-bold" (click)="removeIpAuthorized(item)">
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <label *ngIf="isModalConfigure"  class="flex items-center space-x-2 mt-2">
+          <input type="checkbox" class="form-checkbox" (ngModelChange)="onIpsChange(2)"
+            [(ngModel)]="dataAddUpdateCompany.ipNotAuthorized!.notAuthorized" [disabled]="isView" />
+          <span class="font-semibold text-sm">Rango de IPs No Autorizadas:
+          </span>
+        </label>
+
+        <div *ngIf="isModalConfigure"  class="h-[190px] mt-1 w-[96%] rounded-md "
+          [ngClass]="{ 'opacity-50 pointer-events-none':!dataAddUpdateCompany.ipNotAuthorized!.notAuthorized || isView}">
+          <div class="flex w-full items-center justify-center gap-1"> <!-- gap-1 = 4px -->
+            <div class="w-[42%]">
+              <input placeholder="127.0.0.1" [(ngModel)]="ipNotAuthorized1" type="text"
+                class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center h-[30px]"
+                style="background-color: #EEEDED;" />
+            </div>
+            <div class="w-[6%] justify-center">
+              <label class="block text-[12px]">a</label>
+            </div>
+            <div class="w-[42%]">
+              <input placeholder="127.0.0.9" [(ngModel)]="ipNotAuthorized2" type="text"
+                class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-center h-[30px]"
+                style="background-color: #EEEDED;" />
+            </div>
+            <button class="w-[10%] h-[30px] flex items-center justify-center rounded-md" (click)="addNotAuthorizedIps()"
+              [ngStyle]="{'background-color': clientData.ColorOne }">
+              <img [src]="iconCheck" alt="Perfil" class="w-4 h-4 object-cover opacity-80" />
+            </button>
+          </div>
+          <div class="h-[154px] overflow-y-auto border border-gray-300 rounded-md p-2 space-y-1 mt-1"
+            style="background-color: #F7F7F7;">
+            <div *ngFor="let item of dataAddUpdateCompany.ipNotAuthorized!.ips "
+              class="flex justify-between items-center bg-gray-100 px-2 py-1 rounded">
+              <span class="text-sm font-semibold text-gray-800">{{ item.ip1 | uppercase }} - {{ item.ip2 | uppercase
+                }}</span>
+              <button (click)="removeIpNotAuthorized(item)" class="text-black font-bold">
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <br>
+     </div>
+     </div>
+
+     <!-- Botones -->
+    <div class="flex justify-center gap-4 pt-1 w-full">
+
+      <button *ngIf="nameAddUpdate != 'Nuevo'"
+        class="shadow-lg h-[30px] min-w-[60px] w-1/3 text-black font-semibold rounded-[20px] text-sm flex items-center justify-center gap-1 bg-blue-50 hover:bg-blue-100"
+         (click)="loadUsers(dataAddUpdateCompany.idClient!, '', dataAddUpdateCompany.tatolUser!)">
+        <img [src]="iconUsers" alt="Perfil" class=" h-5 object-cover opacity-80 ">
+        <span class="text-[16px] font-bold cursor-pointer opacity-80 ">&nbsp;{{dataAddUpdateCompany.tatolUser}}</span>
+      </button>
+
+      <button *ngIf="nameAddUpdate != 'Nuevo' && !isView && isDeleteDomain"
+        class="shadow-lg h-[30px] min-w-[60px] w-1/3 text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100"
+         (click)="OpenModalMessage('delete', dataAddUpdateCompany.idClient!)">
+        <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+      </button>
+
+      <div class="flex justify-end w-full gap-2">
+      
+      <button *ngIf="nameAddUpdate != 'Nuevo' && !isView"
+        class=" shadow-lg h-[30px] w-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+        [ngStyle]="{'background-color': clientData.ColorOne }" (click)="OpenModalMessage('update', '')">
+        <img [src]="iconEditWhite" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+        Guardar
+      </button>
+      <button *ngIf="nameAddUpdate == 'Nuevo' && !isView"
+        class="shadow-lg h-[30px] w-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 "
+        [ngStyle]="{'background-color': clientData.ColorOne }" (click)="OpenModalMessage('add', '')">
+        <img [src]="iconSave" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+        Crear
+      </button>
+      </div>
+
+    </div>
+
+
+
+</div>
+</div>
+</div>

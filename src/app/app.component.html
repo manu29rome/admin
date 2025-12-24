@@ -1,0 +1,16 @@
+<div *ngIf="loading$ | async" class="loading-overlay">
+  <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+    <!-- Contenedor de las bolitas -->
+   <!-- loading.component.html -->
+<div class="loading-container">
+  <div class="diamond orange"></div>
+  <div class="diamond blue"></div>
+  <div class="diamond gray"></div>
+</div>
+    <!-- Texto de espera -->
+    <p class="text-gray-600 text-lg">Espere un momento, por favor...</p>
+  </div>
+  
+</div>
+
+  <router-outlet></router-outlet>

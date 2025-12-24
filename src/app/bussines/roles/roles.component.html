@@ -1,0 +1,785 @@
+
+<div class="h-[92vh]">
+<div class=" scale-90 origin-top-left w-[111%]">
+<div *ngIf="isViewRol" class="flex justify-between items-center p-2 pt-[44px] ml-2 ">
+   <div class="relative text-lg font-bold text-black p-3 w-full bg-white/80 justify-center flex ml-1 mr-1 mt-4 rounded-2xl">
+    <span [ngStyle]="{ 'color': clientData.ColorOne }">Mis Roles </span>
+    <!-- <span>{{nameRolSelect}}</span> -->
+  </div>
+</div>
+
+<div class="w-full max-h-[calc(100vh-150px)]">
+  <div *ngIf="isViewRol " class="relative w-[98%] ml-4 px-6 py-4 mt-2 rounded-xl bg-white/60 backdrop-blur-md shadow-sm ">
+    <div class="flex flex-col gap-4">
+
+      <!-- 🔍 Buscador y Filtros -->
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+        <!-- Grupo de búsqueda -->
+        <div class="flex items-center bg-white border border-gray-300 rounded-xl px-4 py-2 shadow-sm w-full lg:max-w-xl">
+          <i class="fas fa-search text-gray-400 mr-2 text-sm"></i>
+          <input
+            type="text"
+            placeholder="Buscar por nombre, detalle o creador"
+            [(ngModel)]="searchTerm"
+            (input)="filterRoles()"
+            class="text-sm border-none focus:outline-none text-gray-700 w-full"
+          />
+        </div>
+
+        <!-- Grupo de filtros -->
+        <div class="flex flex-wrap gap-3 items-center justify-start lg:justify-end w-full">
+
+          <!-- Estado -->
+          <select
+            [(ngModel)]="selectedStatus"
+            (change)="filterRoles()"
+            class="px-3 py-2 text-sm rounded-md shadow-sm border border-gray-300 bg-white focus:outline-none"
+          >
+            <option value="">Todos</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Bloqueado">Bloqueado</option>
+          </select>
+
+          <!-- Orden -->
+          <select
+            [(ngModel)]="sortOrder"
+            (change)="filterRoles()"
+            class="px-3 py-2 text-sm rounded-md shadow-sm border border-gray-300 bg-white focus:outline-none"
+          >
+            <option value="">Sin ordenar</option>
+            <option value="asc">Fecha ascendente</option>
+            <option value="desc">Fecha descendente</option>
+          </select>
+
+          <!-- Botón Nuevo Rol -->
+          <button
+            *ngIf="roles.length < 20 && isUpdateRol"
+            class="flex items-center gap-2 px-4 py-2 rounded-md text-white shadow-md hover:scale-105 transition-transform duration-200"
+            [ngStyle]="{ 'background-color': clientData.ColorOne }"
+            (click)="OpenModalAddUpadte('Nuevo', '', 1)"
+          >
+            <img [src]="iconPlus" alt="Nuevo" class="h-4 w-4 object-cover" />
+            <span class="text-sm font-semibold">Nuevo Rol</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- 🔢 Total de roles -->
+      <div class="flex items-center gap-2 text-sm text-gray-800 ml-1">
+        <img [src]="iconRol" alt="Nuevo" class="h-5 w-5 object-cover">
+        <span class="text-[14px]" >Total roles: <strong class="text-black text-[14px] ml-2">{{ filteredRoles.length }}</strong></span>
+      </div>
+
+    </div>
+
+
+
+  <div *ngIf="isViewRol"
+    class="grid gap-2 p-4" style="grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));">
+
+    <div *ngFor="let rol of filteredRoles"
+  class="from-white  to-gray-100 rounded-2xl shadow-md border border-gray-300 p-5 bg-white
+         transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+
+  <!-- Encabezado -->
+  <div class="flex items-center justify-center pb-4">
+    <p class="text-base font-bold text-gray-800 truncate text-center"
+      [title]="rol.name">
+      {{ rol.name!.length > 30 ? (rol.name | slice: 0:20) + '...' : rol.name }}
+    </p>
+  </div>
+
+  <!-- Información -->
+  <div class="space-y-3 text-sm text-gray-600">
+    <div class="flex justify-between">
+      <span class="font-semibold">Apps:</span>
+      <span class="text-gray-800">{{ rol.apps || '-' }}</span>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <span class="font-semibold">Estado:</span>
+      <span class="px-3 py-1 text-xs rounded-full font-semibold shadow-sm"
+        [ngClass]="{
+          'bg-green-100 text-green-700': rol.status === 'Activo',
+          'bg-red-100 text-red-700': rol.status === 'Inactivo',
+          'bg-yellow-100 text-yellow-700': rol.status !== 'Activo' && rol.status !== 'Inactivo'
+        }">
+        {{ rol.status || '' }}
+      </span>
+    </div>
+
+    <div class="flex justify-between">
+      <span class="font-semibold">Creado por:</span>
+      <span>{{ rol.createBy || '-' }}</span>
+    </div>
+
+    <div class="flex justify-between">
+      <span class="font-semibold">Fecha:</span>
+      <span>{{ rol.dateCreate || '-' }}</span>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="mt-5 flex justify-around items-center border-t pt-3">
+    <!-- Usuarios -->
+    <button (click)="loadUsers(rol.idRol!, rol.name!, rol.totalUser!)"
+      class="flex items-center gap-1 px-3 py-2 rounded-full bg-gray-50 hover:bg-gray-100 
+             text-gray-700 transition shadow-sm"
+      title="Usuarios">
+      <img [src]="iconUsers" alt="Usuarios" class="w-5 h-5 opacity-80" />
+      <span class="font-medium">{{ rol.totalUser }}</span>
+    </button>
+
+    <!-- Ver -->
+    <button (click)="OpenModalAddUpadte(rol.name!, rol.idRol!, 2)"
+      class="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition shadow"
+      title="Ver">
+      <img [src]="iconVisible" alt="Ver" class="w-5 h-5" />
+    </button>
+
+    <!-- Editar -->
+    <button *ngIf="isUpdateRol" (click)="OpenModalAddUpadte(rol.name!, rol.idRol!, 1)"
+      class="p-2 rounded-full bg-yellow-50 hover:bg-yellow-100 transition shadow"
+      title="Editar">
+      <img [src]="iconUpdate" alt="Editar" class="w-5 h-5" />
+    </button>
+
+    <!-- Eliminar -->
+    <button *ngIf="isDeleteRol" (click)="OpenModalMessage('delete', rol.idRol!)"
+      class="p-2 rounded-full bg-red-50 hover:bg-red-100 transition shadow"
+      title="Eliminar">
+      <img [src]="iconDelete" alt="Eliminar" class="w-5 h-5" />
+    </button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div *ngIf="isModalAddUpdate && isViewRol"
+  class="fixed top-[45px] right-2 z-10 w-2/6 min-w-[460px] max-w-[1100px] text-left p-4 overflow-y-auto scrollbar-hide bg-white shadow-2xl rounded-2xl border border-gray-200"
+  style="height: calc(100vh - 50px);">
+
+  <!-- Encabezado -->
+  <div class="relative mb-4 text-center"
+    [ngStyle]="{'border-color': clientData.ColorOne, 'border-bottom-width': '2px', 'border-style': 'solid'}">
+    <h2 class="text-[17px] leading-normal font-semibold text-black pb-2">Rol {{nameAddUpdate}}</h2>
+    <button (click)="ClosedModalAddUpadte()"
+      class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-400 text-[17px] leading-normal font-semibold transition duration-200 pb-2">
+      ✕
+    </button>
+  </div>
+
+  <div class="flex gap-2 justify-center">
+
+    <button
+      class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+      (click)="OpenModalGeneral()"
+      [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalGeneral ? clientData.ColorOne : 'transparent'}">General</button>
+
+    <button
+      class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+      (click)="OpenModalSchedule()"
+      [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalSchedule? clientData.ColorOne : 'transparent'}">Horario</button>
+
+    <button
+      class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+      (click)="OpenModalPermission()"
+      [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalPermission ? clientData.ColorOne : 'transparent'}">Permisos</button>
+
+  </div>
+
+  <div class="overflow-y-auto scrollbar-hide bg-white border border-gray-300 p-4 justify-center gap-4"
+    style="height: calc(100vh - 210px);">
+    <div class=" scale-90 origin-top-left w-[111%] h-[90%]">
+
+    <div *ngIf="isModalGeneral" class="p-1 text-left">
+      <label class="font-semibold text-sm">* Nombre Rol:</label>
+      <input type="text" [(ngModel)]="dataAddUpdateRol.name" placeholder="Rol" [disabled]="isView"
+        [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateRol.name}"
+        class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        style="background-color: #EEEDED;" maxlength="80" />
+    </div>
+
+    <!-- Nombre del dominio -->
+    <div *ngIf="isModalGeneral" class="p-1 text-left mt-2">
+      <label class="font-semibold text-sm">* Descripción:</label>
+      <input type="text" [(ngModel)]="dataAddUpdateRol.detail" placeholder="example" [disabled]="isView"
+        [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateRol.detail}"
+        class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        style="background-color: #EEEDED;" maxlength="200" />
+    </div>
+
+    <div *ngIf="isModalGeneral" class="p-1 text-left mt-2">
+      <label class="font-semibold text-sm">* Estado</label>
+      <select class="block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        style="background-color: #EEEDED;" [disabled]="isView" [(ngModel)]="dataAddUpdateRol.status">
+        <option *ngFor="let status of typeStatus" [value]="status.IdStatus">
+          {{ status.Status }}
+        </option>
+      </select>
+    </div>
+
+    <span *ngIf="isModalSchedule" class="block w-full text-center font-bold text-sm mt-2">Formato 24 horas</span>
+
+<div *ngIf="isModalSchedule" class=" bg-white/70 backdrop-blur-md p-4 rounded-xl shadow-md">
+
+  <!-- Días -->
+  <div class="space-y-1">
+    <!-- Lunes -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.monday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Lunes</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.monday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.monday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.monday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.monday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.monday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Martes -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.tuesday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Martes</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.tuesday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.tuesday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.tuesday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.tuesday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.tuesday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Miércoles -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.wednesday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Miércoles</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.wednesday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.wednesday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.wednesday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.wednesday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.wednesday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Jueves -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.thursday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Jueves</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.thursday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.thursday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.thursday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.thursday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.thursday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Viernes -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.friday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Viernes</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.friday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.friday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.friday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.friday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.friday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Sábado -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.saturday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Sábado</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.saturday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.saturday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.saturday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.saturday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.saturday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+
+    <!-- Domingo -->
+    <label class="flex items-center justify-between bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition">
+      <div class="flex items-center space-x-2 w-[90px]">
+        <input type="checkbox" [(ngModel)]="dataAddUpdateRol.sunday!.check" [disabled]="isView" class="rounded text-blue-600 focus:ring-blue-500">
+        <span class="font-medium text-sm">Domingo</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+        [ngClass]="{ 'opacity-40 pointer-events-none': !dataAddUpdateRol.sunday!.check || isView }">
+        <input type="text" [(ngModel)]="dataAddUpdateRol.sunday!.hourBefore" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.sunday!.minutesBefore" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span class="mx-1 text-gray-500">hasta</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.sunday!.hourAfter" placeholder="hh" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+        <span>:</span>
+        <input type="text" [(ngModel)]="dataAddUpdateRol.sunday!.minutesAfter" placeholder="mm" maxlength="2" [disabled]="isView"
+          class="w-[45px] h-[32px] px-2 text-center border rounded-md focus:ring focus:ring-blue-300" />
+      </div>
+    </label>
+  </div>
+</div>
+
+
+    <span *ngIf="isModalPermission" class="block w-full text-center font-bold text-sm">Aplicación Admin</span>
+
+    <label *ngIf="isModalPermission" class="flex items-center space-x-2 mt-2">
+      <input type="checkbox" [(ngModel)]="dataAddUpdateRol.checkAdmin" [disabled]="isView">
+      <span class="font-medium text-sm">Acceso a la aplicación Admin.</span>
+    </label>
+
+    <span *ngIf="isModalPermission" class="flex font-medium w-full text-sm mt-2 text-left">Modulos:</span>
+   <div *ngIf="isModalPermission"
+  class="h-[180px] bg-white mt-2 rounded-xl shadow-md overflow-y-auto"
+  [ngClass]="{ 'opacity-50 pointer-events-none': !dataAddUpdateRol.checkAdmin || isView }">
+
+  <!-- Encabezados -->
+  <div class="grid grid-cols-4 gap-4 px-4 py-2 text-sm font-semibold border-b bg-gray-100">
+    <span class="text-left">Módulo</span>
+    <span class="text-center">Ver</span>
+    <span class="text-center">Editar</span>
+    <span class="text-center">Eliminar</span>
+  </div>
+
+  <!-- Contenido dinámico -->
+  <div *ngFor="let module of modulesStaticAdmin"
+    class="grid grid-cols-4 gap-4 px-4 py-2 text-sm items-center border-b">
+
+    <!-- Nombre módulo -->
+    <span class="font-medium text-left">{{ module.moduleMenu }}</span>
+
+    <!-- Ver -->
+    <label class="flex justify-center items-center gap-1">
+      <input type="checkbox" [(ngModel)]="module.view" [disabled]="isView"
+        class="w-3 h-3 text-blue-600 border-gray-300 rounded" />
+    </label>
+
+    <!-- Editar -->
+    <label class="flex justify-center items-center gap-1">
+      <input type="checkbox" [(ngModel)]="module.update" [disabled]="isView"
+        class="w-3 h-3 text-green-600 border-gray-300 rounded" />
+    </label>
+
+    <!-- Eliminar -->
+    <label class="flex justify-center items-center gap-1">
+      <input type="checkbox" [(ngModel)]="module.delete" [disabled]="isView"
+        class="w-3 h-3 text-red-600 border-gray-300 rounded" />
+    </label>
+  </div>
+</div>
+
+
+    <span *ngIf="isModalPermission" class="block w-full text-center font-bold text-sm mt-4">Aplicación Chat</span>
+
+    <label *ngIf="isModalPermission" class="flex items-center space-x-2 mt-2">
+      <input type="checkbox" [(ngModel)]="dataAddUpdateRol.checkChat" [disabled]="isView">
+      <span class="font-medium text-sm">Acceso a la aplicación Chat.</span>
+    </label>
+
+
+    <span *ngIf="isModalPermission" class="block font-semibold w-full text-sm mt-2 text-left">
+  Módulos Estáticos:
+</span>
+
+<div *ngIf="isModalPermission" 
+     class="h-[180px] bg-white mt-2 rounded-lg shadow-sm border "
+     [ngClass]="{ 'opacity-50 pointer-events-none':!dataAddUpdateRol.checkChat || isView}">
+
+  <!-- Encabezados -->
+  <div class="grid grid-cols-4 gap-4 px-4 py-2 text-sm font-semibold border-b bg-gray-100">
+    <span>Módulo</span>
+    <span class="text-center">Ver</span>
+    <span class="text-center">Editar</span>
+    <span class="text-center">Eliminar</span>
+  </div>
+
+  <!-- Filas -->
+  <div *ngFor="let module of modulesStaticChat" 
+       class="grid grid-cols-4 gap-4 px-4 py-2 text-sm items-center border-b">
+
+    <!-- Nombre módulo -->
+    <span class="font-medium text-gray-700">{{ module.module }}</span>
+
+    <!-- Permisos -->
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.view" [disabled]="isView" />
+    </label>
+
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.update" [disabled]="isView" />
+    </label>
+
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.delete" [disabled]="isView" />
+    </label>
+  </div>
+</div>
+
+
+    <span *ngIf="isModalPermission" class="flex font-semibold w-full text-sm mt-2 text-left">Modulos
+      Dinamicos:</span>
+    <div *ngIf="isModalPermission" class="h-[180px] bg-white mt-1"
+      [ngClass]="{ 'opacity-50 pointer-events-none':!dataAddUpdateRol.checkChat || isView}">
+
+      <!-- Encabezados -->
+        <div class="grid grid-cols-4 gap-4 px-4 py-2 text-sm font-semibold border-b bg-gray-100">
+    <span>Módulo</span>
+    <span class="text-center">Ver</span>
+    <span class="text-center">Editar</span>
+    <span class="text-center">Eliminar</span>
+  </div>
+
+  <!-- Filas -->
+  <div *ngFor="let module of modulesDynamicChat" 
+       class="grid grid-cols-4 gap-4 px-4 py-2 text-sm items-center border-b">
+
+    <!-- Nombre módulo -->
+    <span class="font-medium text-gray-700">{{ module.module }}</span>
+
+    <!-- Permisos -->
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.view" [disabled]="isView" />
+    </label>
+
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.update" [disabled]="isView" />
+    </label>
+
+    <label class="flex justify-center items-center gap-1 w-3 h-3">
+      <input type="checkbox" [(ngModel)]="module.delete" [disabled]="isView" />
+    </label>
+  </div>
+</div>
+    <br>
+      </div>
+
+
+  </div>
+
+  <!-- Botones -->
+  <div class="flex justify-center gap-4 mt-2">
+
+    <button *ngIf="nameAddUpdate != 'Nuevo'"
+      class="shadow-lg h-[30px] min-w-[60px] w-1/3 text-black font-semibold rounded-[7px] text-sm flex items-center justify-center gap-1 bg-blue-50 hover:bg-blue-100"
+      (click)="loadUsers(dataAddUpdateRol!.idRol!, dataAddUpdateRol!.name!, dataAddUpdateRol!.totalUser! )">
+      <img [src]="iconUsers" alt="Perfil" class=" h-5 object-cover opacity-80 ">
+      <span class="text-[16px] font-bold cursor-pointer opacity-80 ">&nbsp;{{ dataAddUpdateRol.totalUser }}</span>
+    </button>
+
+    <button *ngIf="nameAddUpdate != 'Nuevo' && !isView && isDeleteRol"
+      class="shadow-lg h-[30px] min-w-[60px] w-1/3 text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100"
+      (click)="OpenModalMessage('delete',dataAddUpdateRol.idRol!)">
+      <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+    </button>
+
+    <div class="flex justify-end w-full gap-2">
+      <button *ngIf="nameAddUpdate == 'Nuevo' && !isView"
+        class="shadow-lg h-[30px] w-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+        [ngStyle]="{'background-color': clientData.ColorOne }" (click)="OpenModalMessage('add','')">
+        <img [src]="iconSave" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+        Crear
+      </button>
+      <button *ngIf="nameAddUpdate != 'Nuevo' && !isView"
+        class=" shadow-lg h-[30px] w-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+        [ngStyle]="{'background-color': clientData.ColorOne }" (click)="OpenModalMessage('update', '')">
+        <img [src]="iconEditWhite" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+        Guardar
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- Modal -->
+<div *ngIf="isModalView && isViewRol"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-20">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-auto p-6">
+
+    <!-- Título -->
+    <div class="border-b-2 pb-3 mb-4 text-center" [ngStyle]="{ 'border-color': clientData.ColorThree }">
+      <h2 class="text-xl font-bold text-gray-800">Usuarios Asociados {{ nameRol }}</h2>
+    </div>
+
+    <!-- Campo búsqueda -->
+    <div class="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 mb-4 shadow-inner">
+      <i class="fas fa-search text-gray-500"></i>
+      <input [(ngModel)]="searchTerm" type="text" placeholder="Buscar por nombre o correo..."
+        class="flex-1 bg-transparent outline-none text-sm" />
+    </div>
+
+    <!-- Check: seleccionar todos -->
+    <div *ngIf="isUpdateRol" class="flex items-center mb-3 px-1">
+      <input id="selectAll" type="checkbox" [(ngModel)]="selectAllChecked" (change)="toggleSelectAll()"
+        class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out" [ngStyle]="{ 'color': clientData.ColorOne }" />
+      <label for="selectAll" class="ml-2 text-sm text-gray-800 font-medium">Seleccionar todos</label>
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div *ngIf="filteredUsers().length > 0; else noUsers" class="space-y-3">
+      <div *ngFor="let user of filteredUsers(); let i = index"
+        class="flex items-center gap-4 bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition">
+        <!-- Checkbox -->
+        <input *ngIf="isUpdateRol" type="checkbox" [(ngModel)]="user.selected" (change)="toggleUserSelection(user)"
+          class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out" [ngStyle]="{ 'color': clientData.ColorOne }" />
+
+        <!-- Avatar -->
+        <div class="relative">
+          <img [src]="user.imageUrl" class="w-10 h-10 rounded-full" />
+          <span class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full"
+            [ngStyle]="{ 'background-color': user.color }"></span>
+        </div>
+
+        <!-- Información -->
+        <div class="text-sm">
+          <p class="font-semibold text-gray-800">{{ user.fullName }}</p>
+          <p class="text-gray-600"><span class="font-semibold">Usuario:</span> {{ user.email }}</p>
+          <p class="text-gray-600"><span class="font-semibold">Rol:</span> {{ user.rol }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay usuarios -->
+    <ng-template #noUsers>
+      <div class="text-center text-gray-400 py-6">No hay usuarios asociados.</div>
+    </ng-template>
+
+    <!-- Botón cerrar -->
+    <div class="mt-6 flex justify-end">
+      <button type="button" (click)="closeModalView()"
+        class="text-white font-semibold h-[30px] text-sm items-center justify-center gap-2 rounded-full shadow-md w-[48%] mr-2"
+        [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+        Cerrar
+      </button>
+      <button *ngIf="isUpdateRol && isMigrate"
+        class="flex items-center h-[30px] text-sm items-center justify-center gap-2 rounded-[20px] w-[48%] justify-center text-white" title="Migrar Usuarios"
+        (click)="OpenModalMigrate(idRolMigrate, userTotal)" [ngStyle]="{ 'background-color': clientData.ColorOne }">
+        Migrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-modal-message [isVisible]="isModalVisible" [errorMessage]="errorMessage" [title]="title" [isSuccess]="isSuccess"
+  [isLogin]="isLogin" [colorOne]="colorOneMessage" [messageButton]="messageButton" [colorTwo]="colorTwoMessage">
+</app-modal-message>
+
+
+
+
+<!-- Modal de Respuesta Mejorado -->
+<div *ngIf="showResponseModal"
+  class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm transition duration-300">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-[90%] max-w-[400px] text-center animate-fade-in">
+
+    <!-- Ícono con efecto -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="responseSuccess" [src]="iconSuccessful" alt="Éxito"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+
+        <img *ngIf="!responseSuccess" [src]="iconError" alt="Error"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="text-lg font-bold text-gray-800">{{ tittle }}</h2>
+
+    <!-- Mensaje -->
+    <p class="text-gray-600 mt-2 text-sm">{{ responseMessage }}</p>
+
+    <!-- Botón -->
+    <div class="mt-6">
+      <button (click)="messageAddUpdateCompany(responseSuccess)"
+        class="w-full h-[30px] text-sm items-center justify-center gap-2 rounded-[14px] font-semibold text-white transition duration-200 hover:brightness-110 shadow-md"
+        [ngStyle]="{'background-color': !responseSuccess ? clientData.ColorTwo : clientData.ColorOne}">
+        {{ !responseSuccess ? 'Entiendo' : 'Aceptar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje de Eliminar-->
+<!-- Modal Mensaje de Acción -->
+<div *ngIf="isMessageDelete" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl px-6 py-8 w-[90%] max-w-[400px] text-center relative">
+
+    <!-- Ícono con fondo circular -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="optionDelete" [src]="iconDelete" alt="Eliminar" class="h-14" />
+        <img *ngIf="optionUpdate" [src]="iconUpdate" alt="Actualizar" class="h-14" />
+        <img *ngIf="optionAdd" [src]="iconSaveBlack" alt="Guardar" class="h-14" />
+        <img *ngIf="optionMigrate" [src]="iconMigrate" alt="Migrar" class="h-14" />
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="text-lg font-bold text-gray-900">{{ messageTittle }}</h2>
+
+    <!-- Mensaje -->
+    <p class="text-sm text-gray-600 mt-2">{{ messageOption }}</p>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-3 mt-6 flex-wrap">
+
+      <!-- Botón No -->
+      <button (click)="closeModalMessage()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        No
+      </button>
+
+      <!-- Botón Sí genérico con loading -->
+      <ng-container *ngIf="optionDelete || optionUpdate || optionAdd || optionMigrate ">
+        <button (click)="
+            optionDelete ? deleteRol(idDelete) :
+            optionUpdate ? addUpdateRol('update') :
+            optionAdd ? addUpdateRol('add') : 
+            optionMigrate ? MigrateUsersRol() : null
+          "
+          class="relative h-[30px] text-sm items-center justify-center gap-2  rounded-full font-semibold text-white shadow-md hover:shadow-lg transition w-[100px]"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }">
+          <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          </div>
+          <span [class.opacity-0]="isLoadingBack">Sí</span>
+        </button>
+      </ng-container>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="isModalMigrate && isViewRol"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[80vh] overflow-auto p-6">
+
+    <!-- Título -->
+    <div class="border-b-2 pb-3 mb-4" [ngStyle]="{'border-color': clientData.ColorThree}">
+      <h2 class="text-xl font-bold text-center text-gray-800">
+        Migrar Usuarios {{ nameRolSelect }}
+      </h2>
+    </div>
+
+    <!-- Descripción -->
+    <p class="text-sm text-gray-600 mb-4 text-left">
+      Por favor, selecciona un Rol a la cual deseas migrar los usuarios.
+    </p>
+
+    <!-- Lista de compañías -->
+    <div class="space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+      <ng-container *ngFor="let rol of filteredRoles">
+        <label *ngIf="rol.idRol != isIdRol"
+          class="flex items-center justify-between p-2 rounded-lg border hover:bg-gray-100 transition">
+
+          <div class="flex items-center gap-3">
+            <input type="radio" name="Selection" [value]="rol.idRol" [(ngModel)]="isIdRolMigrate"
+              class="w-4 h-4 accent-gray-500" />
+
+            <span class="text-sm font-medium text-gray-800">{{ rol.name }}</span>
+          </div>
+
+        </label>
+      </ng-container>
+    </div>
+
+    <!-- Botones -->
+    <div class="mt-6 flex justify-between gap-4">
+      <button type="button" (click)="ClosedModalMigrate()"
+        class="flex-1 h-[30px] text-sm items-center justify-center gap-2  rounded-full text-white shadow-md transition hover:opacity-90"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        Cerrar
+      </button>
+
+      <button (click)="OpenModalMessage('migrate', '')"
+        class="flex-1 h-[30px] text-sm items-center justify-center gap-2 rounded-full text-white shadow-md transition hover:opacity-90 relative"
+        [ngStyle]="{'background-color': clientData.ColorOne}">
+
+        <!-- Spinner -->
+        <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+        </div>
+
+        <span [class.opacity-0]="isLoadingBack">Migrar Usuarios</span>
+      </button>
+    </div>
+  </div>
+</div>

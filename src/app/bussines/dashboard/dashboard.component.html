@@ -1,0 +1,93 @@
+<div  class="flex justify-between items-center p-2 pt-[44px] ml-2 ">
+  <div class="relative text-lg font-semibold text-black pt-2">
+    <span style="cursor: pointer;">/ Panel de Control </span>
+    <!-- <span>{{nameRolSelect}}</span> -->
+  </div>
+</div>
+
+<div class="p-2 bg-gray-100 min-h-screen text-gray-800 relative">
+  <!-- Menú horizontal -->
+  <nav class="flex flex-wrap gap-4 justify-start mb-6 text-sm md:text-base">
+    <button class="px-4 py-2 bg-white shadow rounded hover:bg-blue-100">Compañías</button>
+    <button class="px-4 py-2 bg-white shadow rounded hover:bg-blue-100">Usuarios</button>
+    <button class="px-4 py-2 bg-white shadow rounded hover:bg-blue-100">Clientes</button>
+    <button class="px-4 py-2 bg-white shadow rounded hover:bg-blue-100">Tickets</button>
+  </nav>
+
+  <!-- Indicadores (KPI) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-lg font-semibold">Total Ventas</h2>
+      <p class="text-3xl font-bold text-blue-600">$32,000</p>
+      <p class="text-sm text-gray-500">Este mes</p>
+    </div>
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-lg font-semibold">Clientes Activos</h2>
+      <p class="text-3xl font-bold text-green-600">1,250</p>
+      <p class="text-sm text-gray-500">Crecimiento del 12%</p>
+    </div>
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-lg font-semibold">Visitas</h2>
+      <p class="text-3xl font-bold text-purple-600">45,000</p>
+      <p class="text-sm text-gray-500">Últimos 30 días</p>
+    </div>
+  </div>
+
+  <!-- Gráficas principales -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white shadow rounded p-4 xl:col-span-2">
+      <h2 class="text-xl font-semibold mb-2">Ventas por Mes</h2>
+      <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="chartOptions" [type]="'bar'"></canvas>
+    </div>
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-2">Categorías de Clientes</h2>
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [type]="'pie'"></canvas>
+    </div>
+  </div>
+
+  <!-- Más gráficas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-2">Tendencia de Crecimiento</h2>
+      <canvas baseChart [data]="lineChartData" [labels]="lineChartLabels" [options]="chartOptions" [type]="'line'"></canvas>
+    </div>
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-2">Satisfacción del Cliente</h2>
+      <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [type]="'doughnut'"></canvas>
+    </div>
+    <div class="bg-white shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-2">Tickets por Estado</h2>
+      <canvas baseChart [data]="radarChartData" [labels]="radarChartLabels" [type]="'radar'"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabla principal -->
+  <div class="bg-white shadow rounded p-4 mb-6 overflow-x-auto">
+    <h2 class="text-xl font-semibold mb-4">Últimos Registros</h2>
+    <table class="w-full table-auto min-w-[600px]">
+      <thead class="bg-gray-200 text-left">
+        <tr>
+          <th class="p-2">ID</th>
+          <th class="p-2">Nombre</th>
+          <th class="p-2">Categoría</th>
+          <th class="p-2">Fecha</th>
+          <th class="p-2">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hover:bg-gray-100" *ngFor="let item of dataTable">
+          <td class="p-2">{{ item.id }}</td>
+          <td class="p-2">{{ item.name }}</td>
+          <td class="p-2">{{ item.category }}</td>
+          <td class="p-2">{{ item.date }}</td>
+          <td class="p-2">
+            <span [ngClass]="{
+              'text-green-600 font-semibold': item.status === 'Activo',
+              'text-red-600 font-semibold': item.status === 'Inactivo'
+            }">{{ item.status }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

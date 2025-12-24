@@ -1,0 +1,24 @@
+.w-custom-60 {
+  width: 40px;
+  max-width: 40px;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+button {
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Ligera sombra para el hover */
+    transform: scale(1.05); /* Efecto de aumento cuando pasa el cursor */
+  }
+
+

@@ -1,0 +1,564 @@
+<div class="h-[92vh]">
+  <div class=" scale-90 origin-top-left w-[111%]">
+
+    <div class="flex justify-between items-center p-2 pt-[44px] ">
+      <div class="relative text-lg font-bold text-black p-3 w-full bg-white/80 justify-center flex ml-1 mr-1 mt-4 rounded-2xl">
+        <span [ngStyle]="{ 'color': clientData.ColorOne }">Gestor de Correos </span>
+      </div>
+    </div>
+ 
+    <div class="w-[99%] px-2 py-2  rounded-xl bg-white/30 backdrop-blur-md shadow-lg m-2 h-auto">
+      <div class="flex justify-end items-center gap-4">
+        <!-- Título -->
+        <h2 class="text-[16px] text-black font-semibold ">Seleccionar Compañía</h2>
+        <!-- Selector -->
+        <select class="mr-4 min-w-[250px] border border-gray-300 rounded-md p-1 focus:outline-none transition">
+          <option *ngFor="let company of typeCompany" [value]="company.idClient">{{ company.nameCompany}}</option>
+        </select>
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded-md text-white shadow-md hover:scale-105 transition-transform duration-200 mr-2"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }"
+          (click)="openAddTemplateModal()">
+          <img [src]="iconPlus" alt="Nuevo" class="h-4 w-4 object-cover" />
+          <span class="text-sm font-semibold">Nueva Plantilla Externa</span>
+        </button>
+      </div>
+
+      <div class="w-full h-screen p-2 grid grid-cols-10 gap-2 mb-2 max-lg:grid-cols-1 max-lg:h-auto relative">
+        <!-- 📌 Panel 1: Plantillas internas -->
+        <div class="col-span-2 bg-white rounded-2xl shadow gap-2 h-[800px]">
+          <p class="text-ms font-semibold p-2 w-full text-center">Plantillas</p>
+          <!-- Encabezado -->
+
+          <div class="flex">
+            <button 
+              (click)="isOpenInternal = !isOpenInternal; isOpenExternal = false" 
+              class="w-full flex justify-between items-center p-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 rounded-t-2xl"
+              [ngStyle]="isOpenInternal ? {'border-bottom': '3px solid ' + clientData?.ColorOne} : {}">
+  
+              <span>Internas ({{templatesInternal?.length ?? 0}})</span>
+              <span class="text-gray-500">{{ isOpenInternal ? '❯' : '︾' }}</span>
+            </button>
+
+
+            <button (click)="isOpenExternal = !isOpenExternal; isOpenInternal = false" 
+              class="w-full flex justify-between items-center p-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 rounded-t-2xl"
+              [ngStyle]="isOpenExternal ? {'border-bottom': '3px solid ' + clientData?.ColorOne} : {}">
+              <span>Externas</span>
+              <span class="text-gray-500">{{ isOpenExternal ? '❯' : '︾' }}</span>
+            </button>
+          </div>
+
+          <!-- Lista desplegable -->
+          <div *ngIf="isOpenInternal" class="p-2 border-t">
+            <ul class="space-y-3 h-[700px] overflow-y-auto pr-2">
+ 
+              <li *ngFor="let template of templatesInternal" 
+                [ngStyle]="mail.idTemplateMail === template.idTemplateMail 
+                  ? {'background-color': clientData?.ColorOne, 'color': '#fff'} 
+                  : {'background-color': '#fff', 'color': '#111'}"
+                class="cursor-pointer rounded-2xl shadow-sm hover:shadow-lg transition transform hover:-translate-y-1 p-5 border border-gray-200">
+        
+                <!-- Encabezado -->
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-base font-semibold truncate">
+                    {{ template.name }}
+                  </h3>
+                </div>
+
+                <!-- Descripción -->
+                <p class="text-sm line-clamp-2">
+                  {{ template.description || 'Sin descripción disponible.' }}
+                </p>
+
+                <!-- Acciones -->
+                <div class="flex items-center justify-end gap-6 mt-2 border-t pt-2">
+
+                  <button title="Ver"
+                  (click)="selectTemplate(template, 1)"
+                    class="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition shadow">
+                    <img [src]="iconVisible" alt="Ver" class="w-5 h-5 opacity-70" />
+                  </button>
+
+                  <button title="Editar"
+                  (click)="selectTemplate(template, 2)"
+                    class="p-2 rounded-full bg-yellow-50 hover:bg-yellow-100 transition shadow">
+                    <img [src]="iconUpdate" alt="Editar" class="w-5 h-5 opacity-70" />
+                  </button>
+
+                </div>
+              </li>
+
+            </ul>
+
+          </div>
+
+          
+
+          <!-- Lista desplegable -->
+          <div *ngIf="isOpenExternal" class="p-2 border-t">
+            <ul class="space-y-3 h-[800px] overflow-y-auto pr-2">
+ 
+              <li *ngFor="let template of templatesExternal" 
+                [ngStyle]="mail.idTemplateMail === template.idTemplateMail 
+                  ? {'background-color': clientData?.ColorOne, 'color': '#fff'} 
+                  : {'background-color': '#fff', 'color': '#111'}"
+                class="cursor-pointer rounded-2xl shadow-sm hover:shadow-lg transition transform hover:-translate-y-1 p-5 border border-gray-200">
+        
+                <!-- Encabezado -->
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-base font-semibold truncate">
+                    {{ template.name }}
+                  </h3>
+                </div>
+
+                <!-- Descripción -->
+                <p class="text-sm line-clamp-2">
+                  {{ template.description || 'Sin descripción disponible.' }}
+                </p>
+
+                <!-- Acciones -->
+                <div class="flex items-center justify-end gap-6 mt-2 border-t pt-2">
+
+                  <button title="Ver"
+                    (click)="selectTemplate(template, 1)"
+                    class="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition shadow">
+                    <img [src]="iconVisible" alt="Ver" class="w-5 h-5 opacity-70" />
+                  </button>
+
+                  <button title="Editar"
+                    (click)="selectTemplate(template, 2)"
+                    class="p-2 rounded-full bg-yellow-50 hover:bg-yellow-100 transition shadow">
+                    <img [src]="iconUpdate" alt="Editar" class="w-5 h-5 opacity-70" />
+                  </button>
+
+                </div>
+              </li>
+
+            </ul>
+
+          </div>
+        </div>
+
+        <!-- 📌 Panel 2 y 3 -->
+        <div class="col-span-8 grid grid-cols-1 gap-2">
+
+          <!-- Editor -->
+          <div *ngIf="isEdit"  class="flex gap-2">
+
+            <div class="w-[25%] bg-white rounded-xl shadow-md gap-2 flex flex-col border border-gray-200 p-2 h-[800px] overflow-y-auto">
+              <p class="text-ms font-semibold  w-full text-center">
+                Etiquetas
+              </p>
+
+              <!-- Usuario -->
+              <div class=" border-b border-gray-200 gap-2 pb-2">
+                <div class="flex justify-between items-center cursor-pointer" (click)="toggle('usuario')">
+                  <span class="font-semibold text-gray-700 text-sm">Usuario ({{ user?.length ?? 0 }})</span>
+                  <span class="text-gray-500">{{ expanded.usuario ? '❯' : '︾' }}</span>
+                </div>
+
+                <div *ngIf="expanded.usuario" class="mt-2 space-y-2">
+                  <div *ngFor="let u of user" class="flex justify-between items-center">
+                    <button (click)="copyToClipboard(u.name)" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer w-full text-left">
+                      <p  class="text-sm font-semibold text-gray-600 leading-tight pl-2">{{ u.name}}</p>
+                      <p class="text-xs text-gray-500 pl-2">{{ u.description }}</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Compañía -->
+              <div class=" border-b border-gray-200 pb-2">
+                <div class="flex justify-between items-center cursor-pointer" (click)="toggle('compania')">
+                  <span class="font-semibold text-gray-700 text-sm">Compañía ({{company?.length ?? 0}})</span>
+                  <span class="text-gray-500">{{ expanded.compania ? '❯' : '︾' }}</span>
+                </div>
+
+                <div *ngIf="expanded.compania" class="mt-2 space-y-2">
+                  <div *ngFor="let c of company" class="flex justify-between items-center">
+                    <button (click)="copyToClipboard(c.name)" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer w-full text-left">
+                      <p  class="text-sm font-semibold text-gray-600 leading-tight pl-2">{{ c.name}}</p>
+                      <p class="text-xs text-gray-500 pl-2">{{ c.description }}</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Roles -->
+              <div class="border-b border-gray-200 pb-2">
+                <div class="flex justify-between items-center cursor-pointer" (click)="toggle('roles')">
+                  <span class="font-semibold text-gray-700 text-sm">Rol ({{rol?.length ?? 0}})</span>
+                  <span class="text-gray-500">{{ expanded.roles ? '❯' : '︾' }}</span>
+                </div>
+
+                <div *ngIf="expanded.roles" class="mt-2 space-y-2">
+                  <div *ngFor="let r of rol" class="flex justify-between items-center">
+                    <button (click)="copyToClipboard(r.name)" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer w-full text-left">
+                      <p  class="text-sm font-semibold text-gray-600 leading-tight pl-2">{{ r.name}}</p>
+                      <p class="text-xs text-gray-500 pl-2">{{ r.description }}</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-b border-gray-200 pb-2">
+                <div class="flex justify-between items-center cursor-pointer" (click)="toggle('customers')">
+                  <span class="font-semibold text-gray-700 text-sm">Cliente ({{customer?.length ?? 0}})</span>
+                  <span class="text-gray-500">{{ expanded.customers ? '❯' : '︾' }}</span>
+                </div>
+
+                <div *ngIf="expanded.customers" class="mt-2 space-y-2">
+                  <div *ngFor="let cu of customer" class="flex justify-between items-center">
+                    <button (click)="copyToClipboard(cu.name)" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer w-full text-left">
+                      <p  class="text-sm font-semibold text-gray-600 leading-tight pl-2">{{ cu.name}}</p>
+                      <p class="text-xs text-gray-500 pl-2">{{ cu.description }}</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-b border-gray-200 pb-2">
+                <div class="flex justify-between items-center cursor-pointer" (click)="toggle('desings')">
+                  <span class="font-semibold text-gray-700 text-sm">Otros ({{desing?.length ?? 0}})</span>
+                  <span class="text-gray-500">{{ expanded.desings ? '❯' : '︾' }}</span>
+                </div>
+
+                <div *ngIf="expanded.desings" class="mt-2 space-y-2">
+                  <div *ngFor="let d of desing" class="flex justify-between items-center">
+                    <button (click)="copyToClipboard(d.name)" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer w-full text-left">
+                      <p  class="text-sm font-semibold text-gray-600 leading-tight pl-2">{{ d.name}}</p>
+                      <p class="text-xs text-gray-500 pl-2">{{ d.description }}</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="w-[75%] bg-white rounded-xl shadow-md p-2 flex flex-col h-[800px] gap-2">
+
+              <p class="text-ms font-semibold  w-full text-center">Plantilla {{ mail.name }}</p>
+
+              <p class="text-sm font-semibold text-blac">Descripción</p>
+              <input type="text" class="flex-1 border rounded p-2 text-sm max-h-[30px] focus:outline-none" 
+                style="background-color: #EEEDED;" [(ngModel)]="mail.description">
+
+              <p class="text-sm font-semibold text-blac">Asunto</p>
+              <input type="text" class="flex-1 border rounded p-2 text-sm max-h-[30px] focus:outline-none" 
+                style="background-color: #EEEDED;" [(ngModel)]="mail.subject">
+
+              <p class="text-sm font-semibold text-black">Con copia (CC)</p>
+              <div class="flex flex-wrap gap-1 border rounded p-1 bg-gray-100 max-h-[70px] overflow-y-auto">
+                <span *ngFor="let email of ccList; let i = index"
+                  class="flex items-center bg-blue-200 rounded-full px-2 py-1 text-sm">
+                    {{ email }}
+                  <button type="button"
+                    class="ml-1 text-red-600 hover:text-red-800"
+                    (click)="removeEmail('ccList', i)">x
+                  </button>
+                </span>
+                <input type="text"
+                  class="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
+                  (keydown)="addEmail('ccList', $event)"
+                  style="background-color: #EEEDED;"
+                  placeholder="Escribe correo y Enter"/>
+              </div>
+
+              <p class="text-sm font-semibold text-black">Con copia oculta (BCC)</p>
+              <div class="flex flex-wrap gap-1 border rounded p-1 bg-gray-100 max-h-[70px] overflow-y-auto">
+                <span *ngFor="let email of bccList; let i = index"
+                  class="flex items-center bg-green-200 rounded-full px-2 py-1 text-sm">
+                    {{ email }}
+                  <button type="button"
+                    class="ml-1 text-red-600 hover:text-red-800"
+                    (click)="removeEmail('bccList', i)">x</button>
+                </span>
+                <input type="text"
+                style="background-color: #EEEDED;"
+                  class="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
+                  (keydown)="addEmail('bccList', $event)"
+                  placeholder="Escribe correo y Enter"/>
+              </div>
+
+              <p class="text-sm font-semibold text-blac">Editor HTML</p>
+              <textarea [(ngModel)]="htmlContent"
+                (input)="updatePreview()" style="background-color: #EEEDED;"
+                class="flex-1 border rounded p-2 font-mono text-sm resize-none focus:outline-none"
+                placeholder="Escribe tu código HTML aquí...">
+              </textarea>
+
+              <div class="flex justify-end gap-2 m-2 w-full pr-4">
+                <button
+  class="shadow-lg h-[30px] w-[25%] min-w-[100px] text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+  [ngStyle]="{ 'background-color': clientData?.ColorFour|| '#2563eb' }"
+  (click)="openPreviewModal()"
+>
+  Ver HTML
+</button>
+ <!-- Botón inferior -->
+  <button
+    class="shadow-lg h-[30px] w-[25%] min-w-[250px] text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+    [ngStyle]="{ 'background-color': clientData?.ColorThree || '#2563eb' }">
+    <img [src]="iconMailWhite" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+    Enviar Correo de Prueba
+  </button>
+  <!-- Botón superior -->
+  <button
+    class="shadow-lg h-[30px] w-[25%] min-w-[150px] text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+    [ngStyle]="{ 'background-color': clientData?.ColorOne || '#2563eb' }"
+    (click)="OpenModalMessage('update', '')">
+    <img [src]="iconEditWhite" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+    Guardar
+  </button>
+
+ 
+</div>
+
+            </div>
+
+          </div>
+
+          <!-- Vista previa -->
+          <div *ngIf="isView" class="bg-white rounded-xl shadow-md flex flex-col h-[800px]">
+            <div class="p-2 border-b">
+              <p class="text-ms font-semibold  w-full text-center">Visualización {{ mail.name }}</p>
+            </div>
+          <div class="p-6">
+
+          <!-- Descripción -->
+          <div>
+            <h3 class="text-sm font-semibold text-black tracking-wide">
+              Descripción
+            </h3>
+            <p class="text-gray-700 mt-1">
+              {{ mail.description || 'Sin descripción disponible.' }}
+            </p>
+          </div>
+
+          <!-- Asunto -->
+          <div class="mt-2">
+            <h3 class="text-sm font-semibold text-black tracking-wide">
+              Asunto
+            </h3>
+            <p class="text-gray-700 mt-1">
+              {{ mail.subject || 'Sin asunto definido.' }}
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <h3 class="text-sm font-semibold text-black tracking-wide">
+              Con copia (CC):
+            </h3>
+            <p class="text-gray-700 mt-1">
+              {{ mail.subject || 'Sin asunto definido.' }}
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <h3 class="text-sm font-semibold text-black tracking-wide">
+              Con copia oculta (BCC):
+            </h3>
+            <p class="text-gray-700 mt-1">
+              {{ mail.subject || 'Sin asunto definido.' }}
+            </p>
+          </div>
+
+          <div class="h-[500px] mt-2">
+          <iframe
+            #previewIframe
+            class="w-full h-full border-none rounded"
+          ></iframe>
+          </div>
+
+        </div>
+
+        
+      </div>
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal de Agregar Plantilla -->
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  *ngIf="showAddTemplateModal"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+    <div class="relative mb-4 text-center"
+    [ngStyle]="{'border-color': clientData.ColorOne, 'border-bottom-width': '2px', 'border-style': 'solid'}">
+    <h2 class="text-[17px] leading-normal font-semibold text-black pb-2">Nueva Plantilla</h2>
+    <button (click)="closeAddTemplateModal()"
+      class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-400 text-[17px] leading-normal font-semibold transition duration-200 pb-2">
+      ✕
+    </button>
+  </div>
+
+
+    <div  class="space-y-2">
+      <!-- Nombre -->
+      <div>
+        <label class="font-semibold text-sm">* Nombre</label>
+        <input
+          type="text"
+          [(ngModel)]="nameTemplate"
+          placeholder="Nombre de la plantilla"
+          class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+          style="background-color: #EEEDED;"
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="font-semibold text-sm">* Descripción</label>
+        <textarea
+          rows="3"
+          [(ngModel)]="descriptionTemplate"
+          placeholder="Descripción breve"
+          class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+          style="background-color: #EEEDED;"
+        ></textarea>
+      </div>
+
+      <!-- Select de Compañía -->
+      <div>
+        <label class="font-semibold text-sm">* Compañía</label>
+        <select
+          class="w-full rounded-lg border border-gray-300 p-2 border-gray-300 rounded-md p-1 focus:outline-none"
+          [(ngModel)]="idCompany"
+          style="background-color: #EEEDED;">
+          <option *ngFor="let company of typeCompany" [value]="company.idClient">{{ company.nameCompany}}</option>
+        </select>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-end space-x-3 pt-4">
+        <button
+          type="button"
+          (click)="addUpdateTemplate('add')"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }"
+          class="hover:scale-105 transition-transform duration-200 flex items-center h-[30px] text-sm items-center justify-center gap-2 rounded-[20px] w-[48%] justify-center text-white">
+        <img [src]="iconSave" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Mensajes -->
+<div *ngIf="isMessageDelete" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl px-6 py-8 w-[90%] max-w-[400px] text-center relative">
+
+    <!-- Ícono con fondo -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="optionDelete" [src]="iconDelete" alt="Eliminar" class="h-14" />
+        <img *ngIf="optionUpdate" [src]="iconUpdate" alt="Actualizar" class="h-14" />
+      </div>
+    </div>
+
+    <!-- Título y mensaje -->
+    <h2 class="text-lg font-bold text-gray-900">{{ messageTittle }}</h2>
+    <p class="text-sm text-gray-600 mt-2">{{ messageOption }}</p>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-3 mt-6 flex-wrap">
+      <button (click)="closeModalMessage()"
+        class="h-[30px] text-sm items-center justify-center gap-2 rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        No
+      </button>
+
+      <!-- Botón común con loading -->
+      <ng-container *ngIf="optionDelete || optionUpdate">
+        <button (click)="
+            optionUpdate ? addUpdateTemplate('update') : null
+          "
+          class="relative h-[30px] text-sm items-center justify-center gap-2 rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }">
+          <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          </div>
+          <span [class.opacity-0]="isLoadingBack">Sí</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Respuesta Mejorado -->
+<div *ngIf="showResponseModal"
+  class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm transition duration-300">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-[90%] max-w-[400px] text-center animate-fade-in">
+
+    <!-- Ícono con efecto -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="responseSuccess" [src]="iconSuccessful" alt="Éxito"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+
+        <img *ngIf="!responseSuccess" [src]="iconError" alt="Error"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="text-lg font-bold text-gray-800">{{ tittle }}</h2>
+
+    <!-- Mensaje -->
+    <p class="text-gray-600 mt-2 text-sm">{{ responseMessage }}</p>
+
+    <!-- Botón -->
+    <div class="mt-6">
+      <button (click)="messageAddUpdate(responseSuccess)"
+        class="w-full h-[30px] text-sm items-center justify-center gap-2 rounded-[14px] font-semibold text-white transition duration-200 hover:brightness-110 shadow-md"
+        [ngStyle]="{'background-color': !responseSuccess ? clientData.ColorTwo : clientData.ColorOne}">
+        {{ !responseSuccess ? 'Entiendo' : 'Aceptar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ✅ Modal de Vista Previa HTML -->
+<div
+  *ngIf="showHtmlPreview"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+  (click)="closePreviewModal()"
+>
+  <div
+    class="bg-white w-[90%] max-w-5xl h-[90vh] rounded-2xl shadow-2xl overflow-hidden relative p-2"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 border-b">
+      <div class="p-2 border-b w-full">
+              <p class="text-ms font-semibold  w-full text-center">Visualización {{ mail.name }}</p>
+            </div>
+      <button
+        class="text-gray-600 hover:text-gray-900 text-2xl"
+        (click)="closePreviewModal()"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Contenido: Iframe ajustado -->
+    <div class="w-full h-full">
+       <iframe
+    #previewIframe2
+    class="w-full h-full border-none rounded"
+  ></iframe>
+    </div> <!-- ✅ Cierra div contenido -->
+  </div>   <!-- ✅ Cierra div modal interior -->
+</div>     <!-- ✅ Cierra div overlay -->
+

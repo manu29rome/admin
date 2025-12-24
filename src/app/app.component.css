@@ -1,0 +1,53 @@
+/* loading.component.css */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.diamond {
+  width: 60px; /* Más estrecho para un rombo alargado */
+  height: 100px; /* Más alto para dar el efecto alargado */
+  position: absolute;
+  transform: rotate(45deg);
+  opacity: 0;
+  animation: appear 4s infinite;
+}
+
+.orange {
+  background-color: rgba(255, 69, 0, 0.7); /* Naranja */
+  opacity: 1;
+  z-index: 3; /* Aparece primero */
+  animation-delay: 0s;
+}
+
+.blue {
+  background-color: rgba(173, 216, 230, 0.7); /* Azul claro */
+  transform: rotate(45deg) translate(-30px, 10px); /* Ajusta posición */
+  opacity: 1;
+  z-index: 2; /* Aparece segundo */
+  animation-delay: 1s;
+}
+
+.gray {
+  background-color: rgba(105, 105, 105, 0.7); /* Gris oscuro */
+  transform: rotate(45deg) translate(30px, 10px); /* Ajusta posición */
+  opacity: 1;
+  z-index: 1; /* Aparece último */
+  animation-delay: 2s;
+}
+
+@keyframes appear {
+  0%, 80% {
+    opacity: 0;
+  }
+  20%, 60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

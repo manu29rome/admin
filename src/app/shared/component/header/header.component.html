@@ -1,0 +1,105 @@
+<nav  
+[ngStyle]="{
+    'border-color': borderColor, 'border-bottom-width': '2px', 'border-style': 'solid',
+    'background-image': 'url(' + urlImageBackground + ')',
+    'background-size': 'cover',
+    'background-position': 'center'
+  }"
+class="block w-full max-w-full bg-transparent text-white shadow-none transition-all   h-[44px] z-40">
+
+<div class=" scale-90 origin-top-left w-[111%] panel">
+  <div class=" flex justify-between items-center h-full w-auto ">
+    
+    <!-- "Home" alineado a la izquierda -->
+    <div class="flex items-center py-2 ml-12" >
+      <nav aria-label="breadcrumb" class="w-max" >
+        <ol class="flex flex-wrap items-center w-full bg-opacity-60 rounded-md bg-transparent p-0 transition-all">
+          <li class="flex items-center antialiased font-sans text-sm font-normal leading-normal cursor-pointer transition-colors duration-300">
+            <p class="block antialiased text-[17px] leading-normal font-semibold px-4"
+            [ngStyle]="{'color': currentTextColor }"
+            > Administrador</p>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Nombre del usuario y botón de perfil alineados a la derecha -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center space-x-2">
+  <span class="w-3 h-3 rounded-full bg-green-500"></span>
+  <p class="inline-block antialiased font-semibold text-[14px] leading-normal whitespace-nowrap overflow-hidden text-ellipsis hide-on-small"
+   [ngStyle]="{'color': currentTextColor}">
+   {{ clientData.NameUser }}
+  </p>
+    </div>
+      <!-- Icono de Perfil con borde verde -->
+      <button (click)="toggleModal()" 
+        class="relative rounded-full  overflow-hidden transition-transform duration-200 hover:scale-110"
+         title="Perfil">
+        <img [src]="userProfileImage" alt="Perfil" class="w-8 h-8 rounded-full object-cover">
+      </button>
+      <button (click)="toggleModal()" 
+      class="relative rounded-full  overflow-hidden transition-transform duration-200 hover:scale-110 mr-4"
+       title="Notificaciones">
+        <img [src]="iconBell" alt="Perfil" class="w-8 h-8 rounded-full object-cover opacity-80 invert brightness-200">
+      </button>
+    </div>
+  </div>
+  </div>
+</nav>
+
+
+<!-- Modal que se muestra al hacer clic en el botón -->
+<div *ngIf="isModalOpen" class="absolute top-0 right-0 mt-16 mr-2 bg-white border border-gray-300 rounded-lg shadow-xl z-50 p-4 w-80" (click)="closeModal($event)">
+  <div class=" scale-90 origin-top-left">
+  <div class="relative" (click)="$event.stopPropagation()">
+   
+    <!-- Foto de perfil -->
+    <div class="flex justify-center mb-4">
+      <img [src]="userProfileImage" alt="Profile" class="w-20 h-20 rounded-full shadow-md ring-4 ring-green-500">
+    </div>
+
+    <!-- Nombre del usuario -->
+    <div class="text-center text-lg font-semibold mb-2" style="color: black;">
+      ¡Hola! {{ clientData.NameUser }}
+    </div>
+
+    <!-- Correo electrónico del usuario -->
+    <div class="text-center text-gray-500 mb-6">
+      m&#64;m.m
+    </div>
+
+    <!-- Botones de configuración y cerrar sesión con iconos -->
+    <div class="flex justify-around">
+<!-- Botón de Perfil con márgenes ajustados -->
+<button [ngStyle]="{'background-color': currentColor}"
+  
+  class="flex items-center gap-2 py-1 px-4 w-48 text-white text-sm font-medium rounded-md shadow-md transition-all mr-4 ml-4" 
+  (click)="navigateToProfile()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+      <!-- Icono de perfil (cabeza y hombros) -->
+      <path d="M12 12c2.7 0 5-2.2 5-5s-2.3-5-5-5-5 2.2-5 5 2.3 5 5 5z"></path>
+      <path d="M12 14c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"></path>
+    </svg>
+    Perfil
+</button>
+
+<!-- Botón de Cerrar Sesión con márgenes ajustados -->
+<button [ngStyle]="{'border-color': currentColorIcon, 'background-color': currentBackgroundColor, 'color': currentTextColor}"
+  (mouseover)="currentBackgroundColor = currentColorIcon; currentTextColor = 'white'"
+  (mouseout)="currentBackgroundColor = 'white'; currentTextColor = currentColorIcon"
+  class="flex items-center gap-2 py-1 px-4 w-48 border-2 text-sm font-medium rounded-md shadow-md transition-all mr-4 ml-4" 
+  (click)="logOut()">
+  
+  <!-- Icono de salida (logout) -->
+  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" [ngStyle]="{'color': currentTextColor}" viewBox="0 0 24 24" class="w-5 h-5">
+    <path d="M10 2h8a2 2 0 012 2v16a2 2 0 01-2 2h-8a2 2 0 01-2-2v-4h2v4h8V4h-8v4h-2V4a2 2 0 012-2zm1 11v3h5v-3h-5zm-7-2l5-4v3h10v2H9v3l-5-4z"/>
+  </svg>
+  Salir
+</button>
+
+
+    </div>
+  </div>
+</div>
+    </div>

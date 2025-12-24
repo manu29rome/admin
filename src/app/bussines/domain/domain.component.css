@@ -1,0 +1,65 @@
+button {
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Ligera sombra para el hover */
+    transform: scale(1.05); /* Efecto de aumento cuando pasa el cursor */
+  }
+
+/* Ajustes generales al ng-select */
+.custom-ng-select .ng-select-container {
+  background-color: #EEEDED !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.375rem;
+  font-size: 12px;
+  min-height: 40px;
+}
+
+/* Flecha de dropdown */
+.custom-ng-select .ng-arrow-wrapper {
+  display: flex !important;
+  align-items: center;
+}
+
+.custom-ng-select .ng-arrow {
+  border-color: #4b5563 transparent transparent transparent;
+  border-width: 6px 4px 0 4px;
+}
+
+/* Dropdown desplegable */
+.ng-dropdown-panel {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050 !important;
+  font-size: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Estilo de cada opción */
+.ng-dropdown-panel .ng-option {
+  padding: 0.5rem;
+  cursor: pointer;
+  background-color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hover sobre las opciones */
+.ng-dropdown-panel .ng-option:hover {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+

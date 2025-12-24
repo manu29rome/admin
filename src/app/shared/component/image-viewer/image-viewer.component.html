@@ -1,0 +1,64 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" *ngIf="isOpen">
+  <div
+    class="relative w-5/6 min-w-[600px] h-full px-4 overflow-hidden flex items-center justify-center"
+    (wheel)="onWheel($event)"
+    (mousedown)="onMouseDown($event)"
+    (mousemove)="onMouseMove($event)"
+    (mouseup)="onMouseUp()"
+    (mouseleave)="onMouseUp()"
+  >
+    <!-- Imagen con zoom y movimiento -->
+    <img
+      [src]="imageUrl"
+      alt="Imagen"
+      class="select-none rounded-xl shadow-2xl transition-transform duration-200 ease-in-out pointer-events-none"
+      [style.transform]="'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoomLevel + ')'"
+      draggable="false"
+    />
+
+    <!-- Botones superiores derechos: Descargar y Cerrar -->
+    <div class="absolute top-4 right-4 flex items-center gap-3 z-20">
+      <!-- Descargar -->
+      <a [href]="imageUrl" download class="group">
+        <button
+          class="w-8 h-8 flex items-center justify-center rounded-full shadow-md transition-all duration-200 hover:scale-110"
+          [ngStyle]="{ 'background-color': clientData?.ColorOne || '#1e40af' }"
+          title="Descargar"
+        >
+          <img [src]="iconDowland" alt="Descargar" class="w-4 h-4" />
+        </button>
+      </a>
+
+      <!-- Cerrar -->
+      <button
+        (click)="closeViewer()"
+        class="w-8 h-8 flex items-center justify-center rounded-full shadow-md transition-all duration-200 hover:scale-110"
+        [ngStyle]="{ 'background-color': clientData?.ColorTwo || '#374151' }"
+        title="Cerrar"
+      >
+        <img [src]="iconClosed" alt="Cerrar" class="w-3 h-3" />
+      </button>
+    </div>
+
+    <!-- Botones inferiores centrados: Zoom -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20">
+      <!-- Zoom Out -->
+      <button
+        (click)="zoomOut()"
+        class="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-full shadow-md transition-transform hover:scale-110"
+        title="Alejar"
+      >
+        <img [src]="iconLess" alt="Alejar" class="w-4 h-4" />
+      </button>
+
+      <!-- Zoom In -->
+      <button
+        (click)="zoomIn()"
+        class="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-full shadow-md transition-transform hover:scale-110"
+        title="Acercar"
+      >
+        <img [src]="iconPlus" alt="Acercar" class="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+</div>

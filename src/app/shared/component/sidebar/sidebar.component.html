@@ -1,0 +1,174 @@
+
+
+  <aside id="sidebar"
+  class="bg-gray-800 fixed inset-0 z-50 h-screen w-60 -translate-x-full lg:translate-x-0 transition-transform duration-300"
+  [ngStyle]="{
+    'background-image': 'url(' + urlImageBackground + ')',
+    'background-size': 'cover',
+    'background-position': 'center'
+  }"
+  [ngClass]="{ 'w-60': isExpanded, 'w-12': !isExpanded }">
+  <div class=" scale-90 origin-top-left w-[111%] panel">
+
+  <div *ngIf="!isExpanded" class=" flex items-center justify-center w-full py-2.5">
+    <button (click)="toggleSidebar()"
+      class="text-white transition-all duration-300 rounded-r-lg transition-transform duration-200 hover:scale-110">
+      <img *ngIf="!isExpanded" [src]="iconMenu" alt="Perfil" class="w-6 h-6 object-cover opacity-60 invert brightness-200">
+    </button>
+  </div>
+
+  <div *ngIf="isExpanded" class="absolute top-2 right-2 flex flex-col items-end space-y-2">
+    <button (click)="toggleSidebar()"
+      class="text-white transition-all duration-300 rounded-r-lg transition-transform duration-200 hover:scale-110">
+      <img *ngIf="isExpanded" [src]="iconYounger" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200">
+    </button>
+  </div>
+
+  <div *ngIf="isExpanded" class=" flex items-center justify-center w-full px-4">
+    <div class="flex items-center py-2">
+      <nav aria-label="breadcrumb" class="w-max">
+        <ol class="flex flex-wrap items-center w-full bg-opacity-60 rounded-md bg-transparent p-0 transition-all">
+          <li
+            class="flex items-center antialiased font-sans text-sm font-normal leading-normal cursor-pointer transition-colors duration-300">
+            <p class="block antialiased text-[17px] leading-normal font-semibold px-4" [ngStyle]="{'color': colorText }">
+              Administrador</p>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+  </div>
+
+  <div *ngIf="isExpanded" class=" flex items-center justify-center w-full">
+    <img *ngIf="isExpanded" [src]="urlLogoCompany" alt="Perfil" class="w-auto h-[120px] object-cover ">
+  </div>
+
+  <div *ngIf="isExpanded" class=" flex items-center justify-center w-full py-2">
+    <p class="block antialiased  text-[18px] leading-normal font-normal font-semibold" [ngStyle]="{'color': colorText }">
+      {{ clientData?.nameCompany}}</p>
+  </div>
+
+
+  <!-- Opciones del menú -->
+  <nav class="">
+    <ul class="space-y-2 px-2">
+      <!-- Dashboard -->
+      <li>
+        <a [routerLink]="['/dashboard']"
+          class="flex items-center gap-4 text-xm rounded-md h-8 transition-transform duration-200 hover:scale-105"
+          [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(1)"
+          (mouseleave)="onMouseLeave()" [ngStyle]="{
+          'background-color': (selectedIndex === 1 || isActiveRoute('/dashboard')) ? clientData?.ColorOne : 'transparent'
+          }" (click)="onItemClick(1)" [appCustomTooltip]="!isExpanded ? { text: 'Panel de Control', color: clientData?.ColorOne || 'black' } : { text: '' }">
+          <img [src]="iconHome" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200">
+          <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">Panel de Control</span>
+        </a>
+      </li>
+      <li class="relative">
+
+
+        <!-- Opción  Domains -->
+      <li *ngIf="domain">
+        <a [routerLink]="[domainModule.url]"
+          class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105"
+          [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(3)"
+          (mouseleave)="onMouseLeave()"  [ngStyle]="{
+            'background-color': (selectedIndex === 2 || isActiveRoute('/domain')) ? clientData?.ColorOne : 'transparent'
+            }" (click)="onItemClick(3)"  
+            [appCustomTooltip]="!isExpanded ? { text: domainModule.menuName, color: clientData?.ColorOne || 'black' } : { text: '' }">
+
+
+          <img [src]="iconCompany" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200">
+          <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">{{ domainModule.menuName }}</span>
+        </a>
+      </li>
+
+      <!-- Opción  Roles-->
+      <li *ngIf="rol">
+        <a [routerLink]="[rolModule.url]"
+          class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105"
+          [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(4)"
+          (mouseleave)="onMouseLeave()"  [ngStyle]="{
+            'background-color': (selectedIndex === 4 || isActiveRoute('/roles')) ? clientData?.ColorOne : 'transparent'
+            }" (click)="onItemClick(4)" [appCustomTooltip]="!isExpanded ? { text: rolModule.menuName, color: clientData?.ColorOne || 'black' } : { text: '' }">
+
+
+          <img [src]="iconRol" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200">
+          <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">{{ rolModule.menuName }}</span>
+        </a>
+      </li>
+
+      <li *ngIf="user || permission" class="relative">
+        <!-- Contenedor principal -->
+        <div
+          class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105 cursor-pointer"
+          [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(5)"
+          (mouseleave)="onMouseLeave()"  
+          [ngStyle]="{'border-bottom': isSubmenuOpen ? '2px solid ' + colorText : 'none',
+          'background-color': (selectedIndex === 5 || selectedIndex === 6 ) ? clientData?.ColorOne : 'transparent'}" 
+          (click)="toggleSubmenu()"
+          [appCustomTooltip]="!isExpanded ? { text: 'Gestor de Usuarios', color: clientData?.ColorOne || 'black' } : { text: '' }">
+          <img [src]="iconAdminUsers" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200" />
+          <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">Gestor de Usuarios</span>
+
+          <!-- Flecha desplegable -->
+          <svg *ngIf="isExpanded" class="w-4 h-4 ml-auto transition-transform text-white"
+            [ngClass]="isSubmenuOpen ? 'rotate-90' : ''" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+
+        <!-- Submenú -->
+        <ul *ngIf="isSubmenuOpen && user" class="mt-2 space-y-1" [ngClass]="isExpanded ? 'pl-8' : 'pl-0'">
+          <!-- Opción 1: Usuarios -->
+          <li>
+            <a [routerLink]="[usersModule.url]"
+              class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105"
+              [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(5)"
+              (mouseleave)="onMouseLeave()"  
+              [ngStyle]="{'background-color': (selectedIndex === 5 || isActiveRoute('/users')) ? clientData?.ColorOne  : 'transparent'}" 
+              (click)="onItemClick(5)"
+              [appCustomTooltip]="!isExpanded ? { text: usersModule.menuName, color: clientData?.ColorOne || 'black' } : { text: '' }">
+              <img [src]="iconUsers" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200" />
+              <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">{{ usersModule.menuName }}</span>
+            </a>
+          </li>
+        </ul>
+
+        <ul *ngIf="isSubmenuOpen && permission" class="mt-2 space-y-1" [ngClass]="isExpanded ? 'pl-8' : 'pl-0'">
+          <!-- Opción 1: Usuarios -->
+          <li>
+            <a [routerLink]="[permissionModule.url]"
+              class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105"
+              [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(6)"
+              (mouseleave)="onMouseLeave()" 
+              [ngStyle]="{'background-color': (selectedIndex === 6 || isActiveRoute('/permission')) ? clientData?.ColorOne : 'transparent'}" 
+              (click)="onItemClick(6)"
+              [appCustomTooltip]="!isExpanded ? { text: permissionModule.menuName, color: clientData?.ColorOne || 'black' } : { text: '' }">
+              <img [src]="iconPermission" alt="Perfil" class="w-6 h-6 object-cover opacity-80 invert brightness-200" />
+              <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">{{ permissionModule.menuName }}</span>
+            </a>
+          </li>
+        </ul>
+
+      </li>
+
+      <li *ngIf="mail">
+        <a [routerLink]="[mailModule.url]"
+          class="h-8 flex items-center gap-4 text-xm rounded-md transition-transform duration-200 hover:scale-105"
+          [ngClass]="isExpanded ? 'p-2' : 'p-2 justify-center'" (mouseenter)="onMouseEnter(7)"
+          (mouseleave)="onMouseLeave()"  [ngStyle]="{
+            'background-color': (selectedIndex === 7 || isActiveRoute('/mail')) ? clientData?.ColorOne : 'transparent'
+            }" (click)="onItemClick(7)" [appCustomTooltip]="!isExpanded ? { text: mailModule.menuName, color: clientData?.ColorOne || 'black' } : { text: '' }">
+
+
+          <img [src]="iconMail" alt="Perfil" class="w-5  object-cover opacity-80 invert brightness-200">
+          <span *ngIf="isExpanded" class="opacity-80" [ngStyle]="{'color': colorText }">{{ mailModule.menuName }}</span>
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+  </div>
+</aside>

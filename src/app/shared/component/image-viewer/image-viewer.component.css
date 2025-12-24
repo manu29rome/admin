@@ -1,0 +1,17 @@
+
+  
+  button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Ligera sombra para el hover */
+    transform: scale(1.10); /* Efecto de aumento cuando pasa el cursor */
+  }
+
+  .relative {
+  cursor: grab;
+}
+
+.relative:active {
+  cursor: grabbing;
+}
+
+
+

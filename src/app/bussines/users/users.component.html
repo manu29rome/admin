@@ -1,0 +1,1094 @@
+<div class="h-[92vh]">
+<div class=" scale-90 origin-top-left w-[111%]">
+<div *ngIf="isViewUser" class="flex justify-between items-center p-2 pt-[44px]  ">
+  <div class="relative text-lg font-bold text-black p-3 w-full bg-white/80 justify-center flex ml-2 mr-2 mt-4 rounded-2xl">
+    <span [ngStyle]="{ 'color': clientData.ColorOne }" >Mis Usuarios </span>
+    <!-- <span>{{nameRolSelect}}</span> -->
+  </div>
+</div>
+
+<div *ngIf="isViewUser" class="flex flex-wrap gap-4 w-[98%] ml-4 justify-center relative">
+
+  <!-- Card Genérica -->
+  <div
+    class="flex items-center gap-4 bg-white w-full sm:w-[48%] lg:w-[18.9%] h-[100px] p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-300">
+    
+    <!-- Ícono -->
+    <div class="p-3 rounded-full bg-gray-100 text-gray-500">
+      <i class="fas fa-users text-lg"></i>
+    </div>
+
+    <!-- Texto -->
+    <div>
+      <p class="text-sm font-medium text-gray-500">Usuarios Totales</p>
+      <p class="text-2xl font-bold text-gray-800">{{ userInfo.TotalUsers }}</p>
+    </div>
+  </div>
+
+  <!-- Usuarios Hoy -->
+  <div
+    class="flex items-center gap-4 bg-white w-full sm:w-[48%] lg:w-[18.9%] h-[100px] p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-300">
+    
+    <div class="p-3 rounded-full bg-gray-100 text-gray-500">
+      <i class="fas fa-user-plus text-lg"></i>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Usuarios hoy</p>
+      <p class="text-2xl font-bold text-gray-800">{{ userInfo.TotalUsersCreatedDay }}</p>
+    </div>
+  </div>
+
+  <!-- Usuarios Activos -->
+  <div
+    class="flex items-center gap-4 bg-white w-full sm:w-[48%] lg:w-[18.9%] h-[100px] p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-300">
+    
+    <div class="p-3 rounded-full bg-gray-100 text-green-500">
+      <i class="fas fa-user-check text-lg"></i>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Usuarios Activos</p>
+      <p class="text-2xl font-bold text-gray-800">{{ userInfo.TotalUsersActive }}</p>
+    </div>
+  </div>
+
+  <!-- Usuarios Inactivos -->
+  <div
+    class="flex items-center gap-4 bg-white w-full sm:w-[48%] lg:w-[18.9%] h-[100px] p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-300">
+    
+    <div class="p-3 rounded-full bg-gray-100 text-red-500">
+      <i class="fas fa-user-times text-lg"></i>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Usuarios Inactivos</p>
+      <p class="text-2xl font-bold text-gray-800">{{ userInfo.TotalUsersInactive }}</p>
+    </div>
+  </div>
+
+  <!-- Usuarios Eliminados -->
+  <div
+    class="flex items-center gap-4 bg-white w-full sm:w-[48%] lg:w-[18.9%] h-[100px] p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-300">
+    
+    <div class="p-3 rounded-full bg-gray-100 text-gray-500">
+      <i class="fas fa-user-slash text-lg"></i>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Usuarios Eliminados</p>
+      <p class="text-2xl font-bold text-gray-800">{{ userInfo.TotalUsersDeleted }}</p>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<div class=" scale-90 origin-top-left w-[111%] h-[90%]">
+<div *ngIf="isViewUser" class="w-[98%] px-6 py-4 mt-4 rounded-xl bg-white/30 backdrop-blur-md shadow-lg ml-4 mb-2 h-auto">
+  
+   <div> 
+    <!-- Fila principal de filtros y acciones -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+      <!-- 🔍 Buscador -->
+      <div class="flex items-center bg-white border border-gray-300 rounded-xl px-4 py-2 shadow-sm w-full lg:max-w-md min-w-[300px]">
+        <i class="fas fa-search text-gray-400 mr-2"></i>
+        <input type="text" [(ngModel)]="searchText" placeholder="Buscar por nombre, documento, area, correo..."
+          class="w-full text-sm text-gray-700 placeholder-gray-400 focus:outline-none" (keydown.enter)="filterUsers()"
+          maxlength="50" />
+      </div>
+
+      <!-- 🎛️ Acciones -->
+       <div class="flex gap-2 justify-end">
+
+          <button 
+          class="p-1 min-w-[130px] flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="OpenFilterRol()"
+          [ngClass]="{ 'border-black': isFilterRol, 'border-gray-300': selectedRolesIds.length === 0 }">
+           <img [src]="iconFilter" alt="Filtrar" class="w-4 h-4 object-cover opacity-80"  />
+           Roles
+        </button>
+
+          <button 
+          class="p-1 min-w-[130px] flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="OpenFilterCompany()"
+          [ngClass]="{ 'border-black': isFilterCompany, 'border-gray-300': selectedClientsIds.length === 0 }">
+          <img [src]="iconFilter" alt="Filtrar" class="w-4 h-4 object-cover opacity-80" />
+           Compañias
+        </button>
+
+          <button 
+          class="p-1 min-w-[130px] flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border  rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="toggleFilter()"
+           [ngClass]="{ 'border-black': isFilterStatus, 'border-gray-300': selectedStatusIds.length === 0 }">
+          <img [src]="iconFilter" alt="Filtrar" class="w-4 h-4 object-cover opacity-80" />
+           Estados
+        </button>
+
+        
+
+        <!-- 📅 Filtro por fecha -->
+        <button
+          class="p-1 min-w-[100px] flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="OpenFilterDate()" [ngClass]="{ 'border-b-2 border-black': dateStart || dateEnd }">
+          <i class="fas fa-calendar-alt text-gray-500"></i>
+          Fechas
+        </button>
+
+         <button 
+          class=" min-w-[100px] flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="orderUsers()">
+          <img [src]="iconOrder" alt="Filtrar" class="w-4 h-4 object-cover opacity-80" />
+           Orden
+        </button>
+       
+
+        <!-- ➕ Nuevo Usuario -->
+        <button *ngIf="isUpdateUser"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-md shadow-md transition-transform hover:scale-105 min-w-[155px]"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }" (click)="OpenModalAddUpadte('Nuevo', '', 1)">
+          <img [src]="iconPlus" alt="Nuevo" class="h-4 w-4 object-cover" />
+          Nuevo Usuario
+        </button>
+    
+        </div>
+    </div>
+
+    <!-- 🔢 Total de usuarios -->
+    <div class="mt-4 flex items-center gap-2 text-sm text-gray-800">
+      <img [src]="iconUsers" alt="Nuevo" class="h-5 w-5 object-cover">
+      <span class="text-[14px]" >Total usuarios: <strong class="text-black text-[14px] ml-2">{{ totalUsers }}</strong></span>
+    </div>
+  </div>
+  
+
+  <div class="flex w-[full min-w-[400px] mt-2 gap-2">
+    <!-- Reutilizable para cada filtro -->
+    <div *ngIf="isFilterDate"
+      class="flex items-center justify-between rounded-2xl px-4 py-2 shadow-md border min-w-[150px] bg-white border border-gray-300">
+      <h1 class="text-sm font-semibold text-gray-700">Filtro de Fecha</h1>
+      <button class="text-gray-400 hover:text-gray-700 text-sm transition" (click)="clearFilterDate()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="isFilterRol"
+      class="flex items-center justify-between rounded-2xl px-4 py-2  shadow-sm border min-w-[130px] bg-white border border-gray-300">
+      <h1 class="text-sm font-semibold text-gray-700">Filtro de Rol</h1>
+      <button class="text-gray-400 hover:text-gray-700 text-sm transition" (click)="clearFilterRol()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="isFilterCompany"
+      class="flex items-center justify-between rounded-2xl px-4 py-2  shadow-sm border min-w-[170px] bg-white border border-gray-300">
+      <h1 class="text-sm font-semibold text-gray-700">Filtro de Compañía</h1>
+      <button class="text-gray-400 hover:text-gray-700 text-sm transition" (click)="clearFilterCompany()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="isFilterStatus"
+      class="flex items-center justify-between rounded-2xl px-4 py-2 shadow-sm border min-w-[150px] bg-white border border-gray-300">
+      <h1 class="text-sm font-semibold text-gray-700">Filtro de Estado</h1>
+      <button class="text-gray-400 hover:text-gray-700 text-sm transition" (click)="clearFilterStatus()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="isFilterSearch"
+      class="flex items-center justify-between rounded-2xl px-4 py-2 shadow-sm border min-w-[170px] bg-white border border-gray-300">
+      <h1 class="text-sm font-semibold text-gray-700">Filtro de Búsqueda</h1>
+      <button class="text-gray-400 hover:text-gray-700 text-sm transition" (click)="clearFilterSearch()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+     <!-- 🧹 Limpiar filtros -->
+        <button *ngIf="isFilterDate || isFilterRol || isFilterCompany || isFilterStatus || isFilterSearch"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm"
+          (click)="clearFilter()">
+          <i class="fas fa-eraser text-gray-500"></i>
+          Limpiar
+        </button>
+        
+  </div>
+ 
+<br>
+
+
+<div *ngIf="isViewUser" class="">
+  <div class="grid gap-2 " style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+
+<div
+  *ngFor="let user of users"
+  class="max-w-[350px] bg-white rounded-2xl shadow-md border border-gray-300 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+>
+  <!-- Encabezado -->
+  <div
+    class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50"
+  >
+    <div>
+      <p class="font-semibold text-gray-800 text-sm truncate">{{ user.numberDocument }}</p>
+      <p class="text-xs text-gray-500 truncate">{{ user.primaryName }}</p>
+    </div>
+    <span
+      class="w-3 h-3 rounded-full border border-gray-200 shadow-sm"
+      [ngStyle]="{ 'background-color': user.color || '#6B7280' }"
+    ></span>
+  </div>
+
+  <!-- Imagen y datos principales -->
+  <div class="flex flex-col items-center py-4 px-4">
+    <img
+      [src]="user.urlImagen || iconUser"
+      alt="Avatar"
+      class="w-20 h-20 rounded-full object-cover border border-gray-200 shadow-sm"
+    />
+    <p class="mt-3 text-gray-900 font-medium text-sm truncate">{{ user.userName }}</p>
+    <p class="text-xs text-gray-500 truncate">{{ user.email || '' }}</p>
+  </div>
+
+  <!-- Información secundaria -->
+  <div class="px-4 pb-4 text-sm text-gray-600 space-y-2">
+    <div class="flex justify-between">
+      <span class="font-medium">Compañía:</span>
+      <span class="truncate max-w-[160px] text-right">{{ user.nameCompany || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Área:</span>
+      <span class="truncate max-w-[160px] text-right">{{ user.area || '-' }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Rol:</span>
+      <span class="truncate max-w-[160px] text-right">{{ user.rol || '-' }}</span>
+    </div>
+    <div class="flex justify-between items-center">
+      <span class="font-medium">Estado:</span>
+      <span
+        class="px-2 py-0.5 rounded-full text-[11px] font-medium"
+        [ngClass]="{
+          'bg-green-50 text-green-700 border border-green-200': user.status === 'Activo',
+          'bg-red-50 text-red-700 border border-red-200': user.status === 'Inactivo',
+          'bg-yellow-50 text-yellow-700 border border-yellow-200': user.status !== 'Activo' && user.status !== 'Inactivo'
+        }"
+      >
+        {{ user.status }}
+      </span>
+    </div>
+    <div class="flex justify-between">
+      <span class="font-medium">Creado el:</span>
+      <span class="text-gray-500">{{ user.createdDate }}</span>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="mt-2 flex justify-around items-center border-t pt-3 pb-3">
+
+    <button
+      title="Ver"
+      class="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition shadow"
+      (click)="OpenModalAddUpadte(user?.userName!, user?.idUserAccount!, 2)"
+    >
+      <img [src]="iconVisible" alt="Ver" class="w-5 h-5 opacity-70" />
+    </button>
+
+    <button
+      *ngIf="isUpdateUser"
+      title="Editar"
+      class="p-2 rounded-full bg-yellow-50 hover:bg-yellow-100 transition shadow"
+      (click)="OpenModalAddUpadte(user?.userName!, user?.idUserAccount!, 1)"
+    >
+      <img [src]="iconUpdate" alt="Editar" class="w-5 h-5 opacity-70" />
+    </button>
+
+    <button
+      title="Cambiar Contraseña"
+      class="p-2 rounded-full bg-green-50 hover:bg-green-100 transition shadow"
+    >
+      <img [src]="iconPassword" alt="Cambiar Contraseña" class="w-5 h-5 opacity-70" />
+    </button>
+
+    <button
+      *ngIf="isDeleteUser"
+      title="Eliminar"
+      class="p-2 rounded-full bg-red-50 hover:bg-red-100 transition shadow"
+      (click)="OpenModalMessage('delete', user?.idUserAccount!)"
+    >
+      <img [src]="iconDelete" alt="Eliminar" class="w-5 h-5 opacity-70" />
+    </button>
+
+  </div>
+</div>
+
+
+
+  </div>
+</div>
+
+<br>
+
+  <div class="flex flex-wrap w-full items-center gap-4 px-4 py-3 relative mr-2 ">
+    <!-- Paginación -->
+    <div class="flex items-center space-x-3 w-full justify-end">
+
+      <!-- Selector de tamaño de página -->
+      <div class="flex items-center space-x-2 mr-2">
+        <label for="pageSize" class="text-sm text-gray-700 font-medium">Mostrar:</label>
+        <select id="pageSize"
+          class="px-3 py-1 rounded-xl border border-gray-300 shadow-sm bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          [(ngModel)]="pageSize" (change)="clickPage()">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+
+      <!-- Botón Ir al inicio -->
+      <button
+        class="relative flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === 1" (click)="changePage(1)">
+        <i class="fas fa-angle-double-left text-xs"></i> Inicio
+      </button>
+
+      <!-- Botón anterior -->
+      <button
+        class="relative items-center gap-1 px-4 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+        <i class="fas fa-chevron-left text-xs"></i>
+      </button>
+
+      <!-- Números de página -->
+      <ng-container *ngFor="let page of visiblePages">
+        <button class="shadow-md px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200 border" [ngClass]="{
+          'text-white font-semibold shadow-sm': page === currentPage,
+          'bg-white text-gray-700 hover:bg-gray-100': page !== currentPage
+        }"
+          [ngStyle]="page === currentPage ? { 'background-color': clientData?.ColorOne, 'border-color': clientData?.ColorOne } : {}"
+          (click)="changePage(page)">
+          {{ page }}
+        </button>
+      </ng-container>
+
+      <!-- Botón siguiente -->
+      <button
+        class="relative flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+        <i class="fas fa-chevron-right text-xs"></i>
+      </button>
+
+      <!-- Botón Ir al final -->
+      <button
+        class="relative flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl bg-white hover:bg-gray-100 transition-shadow shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === totalPages" (click)="changePage(totalPages)">
+        Final <i class="fas fa-angle-double-right text-xs"></i>
+      </button>
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- Fondo semi-transparente tipo modal -->
+<div *ngIf="showFilterStatus && isViewUser"
+  class="fixed inset-0 z-[999] flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm">
+  <!-- Contenedor principal -->
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-[360px] p-6 text-center border border-gray-100 relative animate-fade-in">
+
+    <!-- Ícono decorativo -->
+    <div class="flex justify-center -mt-12 mb-4">
+      <div class="bg-white p-3 rounded-full shadow-md border border-gray-200">
+        <img [src]="iconStatus" alt="Estado" class="h-12 w-12 object-contain" />
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h3 class="text-[20px] font-bold text-gray-900 mb-6 mt-2 tracking-tight">Filtrar por estado</h3>
+
+    <!-- Lista de checkboxes -->
+    <div class="max-h-32 overflow-y-auto text-left space-y-3 mb-6 px-1">
+      <label *ngFor="let status of typeStatus"
+        class="flex items-center space-x-3 text-sm text-gray-700 hover:text-gray-900">
+        <input type="checkbox" class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out"
+          [value]="status.IdStatus" [checked]="selectedStatusIds.includes(status.IdStatus)"
+          (change)="onCheckboxChangeStatus($event)" />
+        <span>{{ status.Status }}</span>
+      </label>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-3">
+      <button (click)="closeFilter()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-white font-medium transition shadow-sm hover:shadow-md w-1/2"
+        [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+        Cerrar
+      </button>
+      <button (click)="filterUsers()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-white font-medium transition shadow-sm hover:shadow-md w-1/2"
+        [ngStyle]="{ 'background-color': clientData.ColorOne }">
+        Aplicar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Fondo semi-transparente tipo modal -->
+<div *ngIf="showFilterRol && isViewUser"
+  class="fixed inset-0 z-[999] flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm">
+
+  <!-- Contenedor principal con estilo moderno -->
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-[360px] p-6 text-center border border-gray-100 relative animate-fade-in">
+
+    <!-- Ícono grande encima -->
+    <div class="flex justify-center -mt-12 mb-4">
+      <div class="bg-white p-3 rounded-full shadow-md border border-gray-200">
+        <img [src]="iconRol" alt="Estado" class="h-12 w-12 object-contain" />
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h3 class="text-[20px] font-bold text-gray-900 mb-6 mt-2 tracking-tight">Filtrar Por Rol</h3>
+
+    <!-- Lista de checkboxes -->
+    <div class="max-h-32 overflow-y-auto text-left space-y-3 mb-6 px-1">
+      <label *ngFor="let rol of typeRoles"
+        class="flex items-center space-x-3 text-sm text-gray-700 hover:text-gray-900">
+        <input type="checkbox" class=" appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out"
+          [value]="rol.idRol" [checked]="selectedRolesIds.includes(rol.idRol)" (change)="onCheckboxChangeRol($event)" />
+        <span>{{ rol.name }}</span>
+      </label>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-4">
+      <button (click)="closeFilter()"
+        class="rounded-full text-white font-semibold hover:opacity-90 transition w-1/2 h-[30px] text-sm items-center justify-center gap-2 "
+        [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+        Cerrar
+      </button>
+      <button (click)="filterUsers()"
+        class="rounded-full text-white font-semibold hover:opacity-90 transition w-1/2 h-[30px] text-sm items-center justify-center gap-2"
+        [ngStyle]="{ 'background-color': clientData.ColorOne }">
+        Aplicar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Fondo difuminado -->
+<div *ngIf="showFilterCompany && isViewUser"
+  class="fixed inset-0 z-[999] flex justify-center items-center bg-black/50 backdrop-blur-sm">
+
+  <!-- Modal -->
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-[380px] px-8 pt-10 pb-6 text-center relative border border-gray-100 transition-all duration-300">
+
+    <!-- Icono principal -->
+    <div class="absolute -top-10 left-1/2 transform -translate-x-1/2">
+      <div class="bg-gradient-to-tr from-white via-white to-gray-100 p-4 rounded-full shadow-lg border border-gray-200">
+        <img [src]="iconCompany" alt="Icono compañía" class="h-12 w-12 object-contain" />
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h3 class="text-[20px] font-bold text-gray-900 mb-6 mt-2 tracking-tight">Filtrar por Compañía</h3>
+
+    <!-- Lista con scroll y separación visual -->
+    <div class="max-h-44 overflow-y-auto text-left space-y-4 mb-6 pr-1 custom-scroll">
+      <label *ngFor="let company of typeCompany"
+        class="flex items-center gap-3 text-[15px] text-gray-700 hover:text-gray-900 cursor-pointer select-none">
+        <input type="checkbox"
+          class="appearance-none h-4 w-4 rounded-full border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none transition duration-150 ease-in-out"
+          [value]="company.idClient" [checked]="selectedClientsIds.includes(company.idClient)"
+          (change)="onCheckboxChangeCompany($event)" />
+        <span class="truncate">{{ company.nameCompany }}</span>
+      </label>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-4 mt-2">
+      <button (click)="closeFilter()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-white font-medium shadow-sm hover:brightness-110 transition-all w-1/2"
+        [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+        Cerrar
+      </button>
+      <button (click)="filterUsers()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-white font-medium shadow-sm hover:brightness-110 transition-all w-1/2"
+        [ngStyle]="{ 'background-color': clientData.ColorOne }">
+        Aplicar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Overlay oscuro y modal centrado -->
+<div *ngIf="showDatePicker && isViewUser"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
+  (click)="closeFilter()">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl px-8 py-6 space-y-6 relative animate-fade-in"
+    (click)="$event.stopPropagation()">
+
+    <!-- Título del modal -->
+    <div class="text-center">
+      <h2 class="text-[20px] font-bold text-gray-900 mb-1 mt-2 tracking-tight">Filtrar por rango de fechas</h2>
+      <p class="text-sm text-gray-500">Selecciona un rango de máximo 30 días</p>
+    </div>
+
+    <!-- Campo: Fecha inicial -->
+    <div class="space-y-1">
+      <label class="block text-sm font-semibold text-black">Fecha y hora inicial</label>
+      <input type="datetime-local" [(ngModel)]="dateStart" [max]="dateEnd" (change)="validateDateRange()"
+        class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <!-- Campo: Fecha final -->
+    <div class="space-y-1">
+      <label class="block text-sm font-semibold text-black">Fecha y hora final</label>
+      <input type="datetime-local" [(ngModel)]="dateEnd" [min]="dateStart" (change)="validateDateRange()"
+        class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="dateError" class="text-center text-sm text-red-600 font-medium">
+      El rango máximo permitido es de 30 días.
+    </div>
+
+    <!-- Botones -->
+    <div class="flex items-center justify-between pt-4 w-full">
+      <button (click)="resetDates()" class="text-sm text-gray-500 hover:text-gray-700 underline w-1/3">Borrar
+        fechas</button>
+
+      <div class="flex space-x-3 w-full w-2/3">
+        <button (click)="closeFilter()"
+          class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-sm font-semibold text-white hover:opacity-90 transition w-1/2"
+          [ngStyle]="{ 'background-color': clientData.ColorTwo }">
+          Cerrar
+        </button>
+        <button (click)="filterUsers()"
+          [disabled]="!dateStart || !dateEnd || dateError"
+          class="h-[30px] text-sm items-center justify-center gap-2  rounded-full text-sm font-semibold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed w-1/2"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }">
+          Aplicar filtro
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Modal lateral derecho -->
+<div *ngIf="isModalAddUpdate && isViewUser"
+  class="fixed top-[45px] right-2 z-10 w-2/6 min-w-[460px] max-w-[1100px] text-left p-4 overflow-y-auto scrollbar-hide bg-white shadow-2xl rounded-2xl border border-gray-200"
+  style="height: calc(100vh - 50px);">
+
+  <!-- Encabezado -->
+  <div class="relative mb-4 text-center"
+    [ngStyle]="{'border-color': clientData.ColorOne, 'border-bottom-width': '2px', 'border-style': 'solid'}">
+    <div class="flex justify-center items-center gap-2 mb-2">
+      <div *ngIf="option != 1" class="w-2 h-2 rounded-full" [ngStyle]="{ 'background-color': dataAddUpdateUser.color || '#000000'}"></div>
+      <h2 class="text-[17px] font-semibold text-black">{{ nameUserSelected }} </h2>
+    </div>
+    <button (click)="ClosedModalAddUpadte()"
+      class="absolute right-0 top-0 text-gray-900 hover:text-gray-400 text-[17px] leading-normal font-semibold transition duration-200 pb-2">
+      ✕
+    </button>
+    
+  </div>
+
+  <!-- Contenido en columna -->
+  <div class="flex flex-col gap-2">
+
+    <div class="flex justify-center items-center gap-2 h-36 rounded-full">
+      <input type="file" accept="image/*" #imageInput (change)="onImageSelected($event)" hidden  [disabled]="isView"/>
+      <button class="flex flex-col w-36 h-36 rounded-full rounded-lg items-center justify-center bg-white"
+        (click)="imageInput.click()" [disabled]="isView"> 
+        <img *ngIf="selectedImage" [src]="selectedImage" alt="Imagen seleccionada"
+          class="w-36 h-36 rounded-full object-contain">
+        <img *ngIf="!selectedImage" [src]="iconUser" alt="Imagen seleccionada"
+          class="w-36 h-36 rounded-full object-contain">
+      </button>
+      <button *ngIf="selectedImage && !isView && isUpdateUser" [disabled]="isView"
+        class="justify-center  px-2 py-1 rounded z-10 transition-transform duration-200 hover:scale-110"
+        title="Quitar Imagen seleccionado" (click)="DeleteImage()">
+        <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+      </button>
+    </div>
+
+    <div class="flex gap-2 justify-center mt-1">
+
+      <button
+        class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+        (click)="OpenModalGeneral()"
+        [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalGeneral ? clientData.ColorOne : 'transparent'}">General</button>
+
+      <button
+        class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+        (click)="OpenModalPersonal()"
+        [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalPersonal? clientData.ColorOne : 'transparent'}">Personal</button>
+
+      <button
+        class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+        (click)="OpenModalContact()"
+        [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalContact ? clientData.ColorOne : 'transparent'}">Contacto</button>
+
+      <button *ngIf="option == 0"
+        class=" text-[14px] leading-normal font-semibold text-black p-1 text-center w-[32%] hover:scale-105 transition-transform duration-200"
+        (click)="OpenModalFiles()"
+        [ngStyle]="{'border-style': 'solid','border-bottom-width': '2px','border-color': isModalFiles? clientData.ColorOne : 'transparent'}">Documentos</button>
+
+    </div>
+
+    <!-- Formulario de campos -->
+    <div class="overflow-y-auto scrollbar-hide bg-white border border-gray-300 p-4 justify-center gap-4"
+      [ngStyle]="{ height: isModalFiles ? 'calc(100vh - 350px)' : 'calc(100vh - 378px)' }">
+
+      <div class=" scale-90 origin-top-left w-[111%] h-[90%]">
+
+      <div *ngIf="isModalPersonal">
+        <label class="text-sm font-semibold text-black">* Nombre completo</label>
+        <input type="text" placeholder="Juan Pérez" style="background-color: #EEEDED;" maxlength="100" [disabled]="isView"
+          [(ngModel)]="dataAddUpdateUser.primaryName" class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" 
+          [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.primaryName}"/>
+      </div>
+
+      <div *ngIf="isModalPersonal" class="flex gap-2 mt-2">
+        <div class="w-[39%]">
+          <label class="text-sm font-semibold text-black">* Tipo Documento</label>
+          <select class="block  px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm w-full"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.typeDocument" [disabled]="isView"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.typeDocument}">
+            <option *ngFor="let doc of typeDocuments" [value]="doc.IdTypeDocuments">
+              {{ doc.name }}
+            </option>
+          </select>
+        </div>
+        <div class="w-[59%]">
+          <label class="text-sm font-semibold text-black">* Número de documento</label>
+          <input type="text" placeholder="123456789" style="background-color: #EEEDED;"
+            [(ngModel)]="dataAddUpdateUser.numberDocument" maxlength="50" [disabled]="isView"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.numberDocument}"
+            class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" />
+        </div>
+      </div>
+
+
+      <div *ngIf="isModalPersonal" class="flex gap-2 mt-2">
+        <div class="w-[39%]">
+          <label class="text-sm font-semibold text-black">* Genero</label>
+          <select class="w-full rounded-lg px-3 py-2 text-sm  focus:outline-none" [disabled]="isView"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.genre"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.genre}">
+            <option>Indefinido</option>
+            <option>Maculino</option>
+            <option>Femenino</option>
+          </select>
+        </div>
+        <div class="w-[59%]">
+          <label class="text-sm font-semibold text-black">* Fecha de Nacimiento</label>
+          <input type="date" [(ngModel)]="dataAddUpdateUser.dateOfBirth" [disabled]="isView"
+            class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none bg-[#EEEDED]" 
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.dateOfBirth}"/>
+        </div>
+      </div>
+
+      <div *ngIf="isModalPersonal" class="mt-2">
+        <label class="text-sm font-semibold text-black">* Correo electrónico</label>
+        <input type="email" placeholder="correo@ejemplo.com" style="background-color: #EEEDED;" maxlength="100" [disabled]="isView"
+          [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.email}"
+          [(ngModel)]="dataAddUpdateUser.email" class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" 
+          />
+      </div>
+
+      <div *ngIf="isModalPersonal" class="flex gap-2 mt-2">
+        <div class="w-[29%]">
+          <label class="text-sm font-semibold text-black">* Codigo</label>
+          <select class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.code" [disabled]="isView"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.code}">
+            <option *ngFor="let country of countriesCode" [value]="country.dial_code">
+              {{ country.dial_code }}
+            </option>
+          </select>
+        </div>
+        <div class="w-[69%]">
+          <label class="text-sm font-semibold text-black ">* Numero Celular:</label>
+          <input type="text" placeholder="300 000 0000" style="background-color: #EEEDED;"
+            [(ngModel)]="dataAddUpdateUser.numberPhone" [disabled]="isView" (input)="validarSoloNumeros($event, 1)"
+            class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" maxlength="20"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.numberPhone}"/>
+        </div>
+      </div>
+
+      <span *ngIf="isModalPersonal" class="block w-full text-center font-bold text-sm mt-4">Datos de
+        Domicilio</span>
+
+      <div *ngIf="isModalPersonal" class="flex w-full mt-2">
+
+        <div class="w-1/2">
+          <label class="font-semibold text-sm">País:</label>
+          <div class="flex border rounded-md shadow-sm relative">
+
+            <!-- Selector de código de país -->
+            <select [(ngModel)]="selectedCountryCode" [disabled]="isView"
+              class="block w-[0px] focus:outline-none text-sm font-semibold justify-center text-sm "
+              style="background-color: #EEEDED; visibility: hidden;">
+              <option *ngFor="let country of countries" [value]="country.isoCode">
+                {{ country.name }}
+              </option>
+            </select>
+
+            <!-- Input para escribir el país -->
+            <input type="text" [(ngModel)]="countryInput" (input)="filterCountries()" [disabled]="isView"
+              class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold text-sm" 
+              style="background-color: #EEEDED;" autocomplete="new-password" />
+
+            <!-- Lista de sugerencias -->
+            <ul *ngIf="filteredCountries.length"
+              class="absolute top-full left-[10%] z-10 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md">
+              <li *ngFor="let c of filteredCountries" (click)="selectCountry(c)"
+                class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                {{ c.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="w-1/2 ml-1 relative">
+          <label class="font-semibold text-sm">Dep. o Estado:</label>
+          <div class="flex border rounded-md shadow-sm relative">
+
+            <!-- Selector de código del estado -->
+            <select (change)="onStateChange()"
+              class="block w-[0px] focus:outline-none text-sm font-semibold justify-center text-sm " [disabled]="isView"
+              style="background-color: #EEEDED; visibility: hidden;" [(ngModel)]="selectedStatesCode"
+              [disabled]="!selectedCountryCode">
+              <option *ngFor="let state of states" [value]="state.isoCode">
+                {{ state.isoCode }}
+              </option>
+            </select>
+
+            <!-- Input para escribir el estado -->
+            <input type="text" class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold text-sm "
+              style="background-color: #EEEDED;" [(ngModel)]="stateInput" (input)="filterStates()" [disabled]="isView"
+              autocomplete="new-password" />
+
+            <!-- Lista de sugerencias -->
+            <ul *ngIf="filteredStates.length"
+              class="absolute top-full left-[10%] z-10 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md">
+              <li *ngFor="let s of filteredStates" (click)="selectState(s)"
+                class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                {{ s.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div *ngIf="isModalPersonal" class="flex w-full mt-2">
+
+        <div class="w-1/2 ml-1 relative">
+          <label class="font-semibold text-sm">Ciudad:</label>
+          <div class="flex border rounded-md shadow-sm relative">
+
+            <!-- Select de código si lo usas (opcional) -->
+            <select class="block w-[0px] focus:outline-none text-sm font-semibold justify-center text-sm " [disabled]="isView"
+              style="background-color: #EEEDED;" [(ngModel)]="selectedCityCode" [disabled]="!cities.length">
+              <option *ngFor="let city of cities" [value]="city.name">
+                {{ city.name }} 
+              </option>
+            </select>
+
+            <!-- Input de ciudad con autocompletado -->
+            <input type="text" class="block w-[100%] px-3 py-2 focus:outline-none text-sm font-semibold text-sm "
+              style="background-color: #EEEDED;" [(ngModel)]="cityInput" (input)="filterCities()" [disabled]="isView"
+              autocomplete="new-password" />
+
+            <!-- Lista desplegable de sugerencias -->
+            <ul *ngIf="filteredCities.length"
+              class="absolute top-full left-[10%] z-20 bg-white border rounded-md w-[90%] max-h-[120px] overflow-auto shadow-md">
+              <li *ngFor="let c of filteredCities" (click)="selectCity(c)"
+                class="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm">
+                {{ c.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+
+        <div class="w-1/2 ml-1">
+          <label class="font-semibold text-sm">Codigo Postal:</label>
+          <input type="text" placeholder="252211" [disabled]="isView"
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            [(ngModel)]="dataAddUpdateUser.codePostal" style="background-color: #EEEDED;" maxlength="11" />
+        </div>
+      </div>
+
+      <div *ngIf="isModalPersonal" class="mt-2 text-left">
+        <label class="font-semibold text-sm">Detalle de dirección:</label>
+        <input type="text" placeholder="carrera 123" maxlength="100" [(ngModel)]="dataAddUpdateUser.address"
+          class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+          maxlength="30" [disabled]="isView"
+          style="background-color: #EEEDED;" />
+      </div>
+
+
+      <div *ngIf="isModalGeneral" class="flex gap-2">
+        <div class="w-[49%]">
+          <label class="text-sm font-semibold text-black">* Usuario aplicación</label>
+          <input #usernameInput type="text" placeholder="ejemplo" style="background-color: #EEEDED;"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.userName}"
+            [(ngModel)]="dataAddUpdateUser.userName" maxlength="100" [disabled]="isView" class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
+            (input)="onUsernameInput(usernameInput)" />
+        </div>
+        <div class="w-[49%]">
+          <label class="text-sm font-semibold text-black">* Compañía</label>
+          <select
+            class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+            style="background-color: #EEEDED;"  (change)="getAreas()"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.idClient}"
+            [(ngModel)]="dataAddUpdateUser.idClient" [disabled]="isView">
+            <option *ngFor="let company of typeCompany" [value]="company.idClient">
+              {{ company.nameCompany }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="isModalGeneral" class="mt-2">
+        <label class="text-sm font-semibold text-black">Estado</label>
+        <select class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.status}"
+          style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.status" [disabled]="isView">
+          <option *ngFor="let status of typeStatus" [value]="status.IdStatus">
+            {{ status.Status }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="isModalGeneral" class="mt-2">
+        <label class="text-sm font-semibold text-black">Rol</label>
+        <select class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.rol}"
+          style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.rol" [disabled]="isView">
+          <option *ngFor="let rol of typeRoles" [value]="rol.idRol">
+            {{ rol.name }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="isModalGeneral" class="mt-2">
+        <label class="text-sm font-semibold text-black">Area</label>
+        <select class="block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold"
+        [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.area}"
+          style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.area" [disabled]="isView">
+          <option *ngFor="let area of typeArea" [value]="area.idArea">
+            {{ area.area }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Archivos -->
+<div *ngIf="isModalFiles && option == 0">
+  <label class="text-sm font-semibold text-black mb-2 block">
+    Documentos (PDF, JPG, PNG) – máx. 5 archivos
+  </label>
+
+  <input *ngIf="(selectedFiles?.length ?? 0) < 5"   type="file" accept=".pdf,.jpg,.png" multiple [disabled]="isView"
+    (change)="onFilesSelected($event)"
+    class="block w-full text-sm mb-4 border border-gray-300 rounded-lg px-3 py-2 file:bg-blue-50 file:border-none file:rounded-md file:px-3 file:py-1 file:text-blue-700 file:cursor-pointer" />
+
+  <!-- Listado visual -->
+  <div class="flex flex-col gap-2 h-auto overflow-y-auto pr-1">
+    <div *ngFor="let archivo of selectedFiles; let i = index"
+     class="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 shadow-sm">
+
+  <!-- Parte izquierda: ícono + nombre -->
+  <div class="flex items-center gap-3 cursor-pointer" (click)="openFile(archivo)">
+    <ng-container [ngSwitch]="archivo.type">
+     <img *ngSwitchCase="'application/pdf'" [src]="iconPDF" alt="PDF" class="w-6 h-6" />
+     <img *ngSwitchCase="'image/png'" [src]="iconImage" alt="PNG" class="w-6 h-6" />
+     <img *ngSwitchCase="'image/jpeg'" [src]="iconImage" alt="JPG" class="w-6 h-6" />
+     <img *ngSwitchDefault [src]="iconImage" alt="Archivo" class="w-6 h-6" />
+    </ng-container>
+
+    <span class="text-[14px] text-gray-700 truncate max-w-[250px]">
+      {{ archivo.name }}
+    </span>
+  </div>
+
+  <!-- Parte derecha: botón eliminar -->
+  <button *ngIf="isDeleteUser && !isView"  (click)="removeFile(i,archivo.idUsersFiles ?? '' ); $event.stopPropagation()"
+          class="rounded-full p-1 bg-red-100 hover:underline">
+    <img  [src]="iconDelete" alt="PNG" class="w-4 h-4" />
+  </button>
+</div>
+
+  </div>
+</div>
+
+
+      <!-- Contacto adicional -->
+      <div *ngIf="isModalContact" class=" gap-4">
+        <div>
+          <label class="text-sm font-semibold text-black focus:outline-none">* Nombre completo Contacto</label>
+          <input type="text" placeholder="Juan Pérez" style="background-color: #EEEDED;" maxlength="200" [disabled]="isView"
+          [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.userContact?.fullname}"
+            [(ngModel)]="dataAddUpdateUser.userContact!.fullname" class="w-full rounded-lg px-3 py-2 text-sm " />
+        </div>
+
+        <div class="mt-2">
+          <label class="text-sm font-semibold text-black">* Parentezco</label>
+          <input type="text" placeholder="Padre, madre, hijo..." style="background-color: #EEEDED;"
+          [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.userContact?.kinship}"
+            [(ngModel)]="dataAddUpdateUser.userContact!.kinship" maxlength="60" [disabled]="isView"
+            class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" />
+        </div>
+
+        <div class="flex gap-2 mt-2">
+          <div class="w-[29%]">
+            <label class="text-sm font-semibold text-black">* Codigo</label>
+            <select class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none text-sm font-semibold" [disabled]="isView"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.userContact?.code}"
+              style="background-color: #EEEDED;" [(ngModel)]="dataAddUpdateUser.userContact!.code">
+              <option *ngFor="let country of countriesCode" [value]="country.dial_code">
+                {{ country.dial_code }}
+              </option>
+            </select>
+          </div>
+          <div class="w-[69%]">
+            <label class="text-sm font-semibold text-black">* Numero Celular:</label>
+            <input type="text" placeholder="300 000 0000" style="background-color: #EEEDED;" (input)="validarSoloNumeros($event, 2)"
+            [ngClass]="{'border-b-2 border-red-700': submitted && !dataAddUpdateUser.userContact?.numberPhone}"
+              [(ngModel)]="dataAddUpdateUser.userContact!.numberPhone" maxlength="20" [disabled]="isView"
+              class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none" />
+          </div>
+
+        </div>
+      </div>
+      <br>
+      </div>
+    </div>
+    <!-- Botones -->
+    <div *ngIf="!isModalFiles && option == 1 && isUpdateUser && !isView" class="flex justify-end gap-4 mt-2">
+      <button
+        class="shadow-lg h-[30px] w-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+        [ngStyle]="{ 'background-color': clientData?.ColorOne || '#2563eb' }" (click)="OpenModalMessage('add', '')">
+        <img [src]="iconSave" alt="Perfil" class="w-4 h-4 object-contain">
+        Crear
+      </button>
+    </div>
+    <div *ngIf="!isModalFiles && option == 0" class="flex justify-end gap-4 mt-2">
+      <div class="flex w-1/2 gap-1">
+    <button
+      title="Cambiar Contraseña"
+      class="shadow-lg h-[30px] min-w-[25px] w-1/2 text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100">
+      <img [src]="iconPassword" alt="Cambiar Contraseña" class="h-4 opacity-70" />
+    </button>
+    <button *ngIf="nameAddUpdate != 'Nuevo' && !isView && isDeleteUser"
+        class="shadow-lg h-[30px] min-w-[25px] w-1/2 text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100"
+         (click)="OpenModalMessage('delete', dataAddUpdateUser.idUserAccount!)">
+        <img [src]="iconDelete" alt="Perfil" class=" h-4 object-cover opacity-80 ">
+      </button>
+    </div>
+      
+      <button *ngIf="isUpdateUser && !isView"
+        class="shadow-lg h-[30px] min-w-[60px] w-1/2 rounded-full text-white font-semibold rounded-[20px] text-sm flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105"
+        [ngStyle]="{ 'background-color': clientData?.ColorOne || '#2563eb' }" (click)="OpenModalMessage('update', '')">
+        <img [src]="iconEditWhite" alt="Perfil" class="w-3.5 h-3.5 object-contain">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensajes -->
+<div *ngIf="isMessageDelete" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl px-6 py-8 w-[90%] max-w-[400px] text-center relative">
+
+    <!-- Ícono con fondo -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="optionDelete" [src]="iconDelete" alt="Eliminar" class="h-14" />
+        <img *ngIf="optionUpdate" [src]="iconUpdate" alt="Actualizar" class="h-14" />
+        <img *ngIf="optionAdd" [src]="iconSaveBlack" alt="Guardar" class="h-14" />
+      </div>
+    </div>
+
+    <!-- Título y mensaje -->
+    <h2 class="text-lg font-bold text-gray-900">{{ messageTittle }}</h2>
+    <p class="text-sm text-gray-600 mt-2">{{ messageOption }}</p>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-3 mt-6 flex-wrap">
+      <button (click)="closeModalMessage()"
+        class="h-[30px] text-sm items-center justify-center gap-2  rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+        [ngStyle]="{'background-color': clientData.ColorTwo}">
+        No
+      </button>
+
+      <!-- Botón común con loading -->
+      <ng-container *ngIf="optionDelete || optionUpdate || optionAdd">
+        <button (click)="
+            optionDelete ? DeleteUser(idDelete) :
+            optionUpdate ? AddUpdateUser('update') :
+            optionAdd ? AddUpdateUser('add') : null"
+          class="relative h-[30px] text-sm items-center justify-center gap-2 rounded-full font-semibold text-white shadow-md hover:shadow-lg transition  w-[100px]"
+          [ngStyle]="{ 'background-color': clientData.ColorOne }">
+          <div *ngIf="isLoadingBack" class="absolute inset-0 flex items-center justify-center">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          </div>
+          <span [class.opacity-0]="isLoadingBack">Sí</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Respuesta Mejorado -->
+<div *ngIf="showResponseModal"
+  class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm transition duration-300">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-[90%] max-w-[400px] text-center animate-fade-in">
+
+    <!-- Ícono con efecto -->
+    <div class="flex justify-center mb-4">
+      <div class="bg-gray-100 rounded-full p-4 shadow-inner">
+        <img *ngIf="responseSuccess" [src]="iconSuccessful" alt="Éxito"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+
+        <img *ngIf="!responseSuccess" [src]="iconError" alt="Error"
+          class="h-16 transition-transform duration-300 hover:scale-110">
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="text-lg font-bold text-gray-800">{{ tittle }}</h2>
+
+    <!-- Mensaje -->
+    <p class="text-gray-600 mt-2 text-sm">{{ responseMessage }}</p>
+
+    <!-- Botón -->
+    <div class="mt-6">
+      <button (click)="messageAddUpdateCompany(responseSuccess)"
+        class="w-full h-[30px] text-sm items-center justify-center gap-2  rounded-[14px] font-semibold text-white transition duration-200 hover:brightness-110 shadow-md"
+        [ngStyle]="{'background-color': !responseSuccess ? clientData.ColorTwo : clientData.ColorOne}">
+        {{ !responseSuccess ? 'Entiendo' : 'Aceptar' }}
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Modal imagenes -->
+  <app-image-viewer></app-image-viewer>
