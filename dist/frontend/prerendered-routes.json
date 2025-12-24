@@ -1,0 +1,15 @@
+{
+  "routes": {
+    "/": {},
+    "/dashboard": {},
+    "/domain": {},
+    "/email-recovery": {},
+    "/login": {},
+    "/logintwo": {},
+    "/mail": {},
+    "/password-update": {},
+    "/permission": {},
+    "/roles": {},
+    "/users": {}
+  }
+}
