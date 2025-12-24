@@ -1,5 +1,5 @@
 # Etapa 1: Build
-FROM node:20.22-alpine AS build   # <- Node 20
+FROM node:20.22-alpine AS build  
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --force
