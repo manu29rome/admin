@@ -13,7 +13,8 @@ export const BASE_URLS = {
     SIGNALR: 'https://localhost:44372/chatHub',
     //SIGNALR: 'http://localhost:5000/chatHub',
     URL_SOUND_NOTIFICATION: '/sound/Audio2.mp3',
-    URL_FRONT: 'http://localhost:4200',
+    //URL_FRONT: 'http://localhost:4200',
+    URL_FRONT: 'https://admin-production-0f36.up.railway.app',
     CODE_CONTRY: 'https://gist.githubusercontent.com/anubhavshrimal/75f6183458db8c453306f93521e93d37/raw/CountryCodes.json'
 };
 
