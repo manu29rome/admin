@@ -10,7 +10,7 @@ RUN npm install --force
 COPY . .
 
 # Construir Angular
-RUN npm run build --configuration production
+RUN npm run build 
 
 # Etapa 2: Servir con Nginx
 FROM nginx:alpine
